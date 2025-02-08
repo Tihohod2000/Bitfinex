@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Bitfinex.data;
 using RestSharp;
 
 namespace Bitfinex;
@@ -13,7 +14,22 @@ namespace Bitfinex;
 public class BitfinexConnectorRestApi : ITestConnector
 {
     private readonly RestClient _client;
-    
+    private readonly IRestApi _restapi;
+    private readonly ISocket _socket;
+
+    public TestConnector(IRestApi restConnector, ISocket socketConnector)
+    {
+        _restapi = restConnector ?? throw new ArgumentNullException(nameof(restConnector));
+        _socket = socketConnector ?? throw new ArgumentNullException(nameof(socketConnector));
+    }
+
+
+    Task<IEnumerable<Trade>> ITestConnector.GetNewTradesAsync(string pair, int maxCount) =>
+        _restapi.GetNewTradesAsync(pair, maxCount);
+
+
+
+
     public BitfinexConnectorRestApi()
     {
         var options = new RestClientOptions("https://api-pub.bitfinex.com/v2/");
