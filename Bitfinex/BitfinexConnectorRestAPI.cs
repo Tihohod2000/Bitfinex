@@ -40,7 +40,7 @@ public class BitfinexConnectorRestApi : ITestConnector
                 Id = Convert.ToInt64(t[0]),
                 Pair = pair,
                 Time = DateTimeOffset.FromUnixTimeMilliseconds(Convert.ToInt64(t[1])),
-                Side = Convert.ToDecimal(t[2]) > 0 ? "Buy" : "Sell",
+                Side = Convert.ToInt64(t[2]) > 0 ? "Buy" : "Sell",
                 Amount = Convert.ToDecimal(t[2]),
                 Price = Convert.ToDecimal(t[3])
             });
