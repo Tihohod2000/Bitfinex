@@ -1,31 +1,166 @@
 using TestHQ;
+using System;
+using System.Threading.Tasks;
+using System.Net.WebSockets;
+using System.Text.Json;
+using System.Text;
 
 namespace Bitfinex.data;
 
 public class Socket : ISocket
 {
+    private ClientWebSocket _webSocket = new ClientWebSocket();
+    private Uri _webSocketUri = new Uri("wss://api-pub.bitfinex.com/ws/2");
+    
+    
     public event Action<Trade>? NewBuyTrade;
     public event Action<Trade>? NewSellTrade;
+    public event Action<Candle>? CandleSeriesProcessing;
+    
+    public async Task ConnectAsync()
+    {
+        await _webSocket.ConnectAsync(_webSocketUri, CancellationToken.None);
+        StartReceiving();
+    }
+    
+    private async void StartReceiving()
+    {
+        // Получение данных
+        var buffer = new byte[1024];
+        while (_webSocket.State == WebSocketState.Open)
+        {
+            var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            if (result.MessageType == WebSocketMessageType.Text)
+            {
+                var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                ProcessMessage(message);
+            }
+        }
+    }
+    
+    
+   private void ProcessMessage(string message)
+        {
+            Console.WriteLine($"Received message: {message}");
+            
+            try
+            {
+                var jsonDocument = JsonDocument.Parse(message);
+
+                // Проверяем событие
+                if (jsonDocument.RootElement.TryGetProperty("event", out var eventProperty) && eventProperty.GetString() == "subscribed")
+                {
+                    var channel = jsonDocument.RootElement.GetProperty("channel").GetString();
+                    var pair = jsonDocument.RootElement.GetProperty("symbol").GetString();
+                    Console.WriteLine($"Subscribed to {channel} for pair {pair}");
+                    return;
+                }
+                
+                if (jsonDocument.RootElement.ValueKind != JsonValueKind.Array || jsonDocument.RootElement.GetArrayLength() < 3)
+                {
+                    Console.WriteLine($"Не верная структура json: {message}");
+                    return;
+                }
+                
+                var eventType = jsonDocument.RootElement[1].ValueKind == JsonValueKind.String ? jsonDocument.RootElement[1].GetString() : null;
+                var data = jsonDocument.RootElement[2];
+
+
+                if (eventType == "te" || eventType == "tu")
+                {
+                    if (data.ValueKind != JsonValueKind.Array || data.GetArrayLength()<4)
+                    {
+                        Console.WriteLine($"Ошибка трейда данных: {message}");
+                        return;
+                    }
+
+                    var trade = new Trade
+                    {
+                        Time = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
+                        Id = data[1].GetInt64(),
+                        Amount = data[2].GetDecimal(),
+                        Price = data[3].GetDecimal(),
+                        Side = data[2].GetDecimal() > 0 ? "buy" : "sell"
+                    };
+                    
+                    if (trade.Side == "buy")
+                        NewBuyTrade?.Invoke(trade);
+                    else
+                        NewSellTrade?.Invoke(trade);
+
+                    return;
+                }
+
+                if (eventType == "candles")
+                {
+                    if (data.ValueKind != JsonValueKind.Array || data.GetArrayLength() < 6)
+                    {
+                        Console.WriteLine($"Ошибка свечей данных: {message}");
+                        return;
+                    }
+                    
+                    var candle = new Candle
+                    {
+                        OpenTime = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
+                        OpenPrice = data[1].GetDecimal(),
+                        HighPrice = data[2].GetDecimal(),
+                        LowPrice = data[3].GetDecimal(),
+                        ClosePrice = data[4].GetDecimal(),
+                        TotalVolume = data[5].GetDecimal()
+                    };
+                    CandleSeriesProcessing?.Invoke(candle);
+                    
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing message: {ex.Message}");
+            }
+        }
+   
+    
+   
     public void SubscribeTrades(string pair, int maxCount = 100)
     {
-        throw new NotImplementedException();
+        var subscribeMessage = $"{{\"event\":\"subscribe\",\"channel\":\"trades\",\"symbol\":\"{pair}\",\"maxCount\":{maxCount}}}";
+        SendMessage(subscribeMessage);
     }
-
+    
     public void UnsubscribeTrades(string pair)
     {
-        throw new NotImplementedException();
+        var unsubscribeMessage = $"{{\"event\":\"unsubscribe\",\"channel\":\"trades\",\"symbol\":\"{pair}\"}}";
+        SendMessage(unsubscribeMessage);
     }
-
-    public event Action<Candle>? CandleSeriesProcessing;
-
-    public void SubscribeCandles(string pair, int periodInSec, long? count, DateTimeOffset? from = null,
-        DateTimeOffset? to = null)
+    
+    
+    public void SubscribeCandles(string pair, int periodInSec, long? count, DateTimeOffset? from = null, DateTimeOffset? to = null)
     {
-        throw new NotImplementedException();
+        var subscribeMessage = $"{{\"event\":\"subscribe\",\"channel\":\"candles\",\"key\":\"trade:{periodInSec/60}m:{pair}\"}}";
+        SendMessage(subscribeMessage);
     }
 
     public void UnsubscribeCandles(string pair)
     {
-        throw new NotImplementedException();
+        var unsubscribeMessage = $"{{\"event\":\"unsubscribe\",\"channel\":\"candles\",\"key\":\"trade:{pair}\"}}";
+        SendMessage(unsubscribeMessage);
     }
+    
+    
+    private async void SendMessage(string message)
+    {
+        var bytes = Encoding.UTF8.GetBytes(message);
+        var buffer = new ArraySegment<byte>(bytes);
+        try
+        {
+            await _webSocket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+            Console.WriteLine($"Sent message: {message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error sending message: {ex.Message}");
+        }
+    }
+    
+    
 }

@@ -33,7 +33,7 @@ public class RestApi: IRestApi
                     Id = t[0].GetInt64(),
                     Pair = pair,
                     Time = DateTimeOffset.FromUnixTimeMilliseconds(t[1].GetInt64()),
-                    Side = t[2].GetDecimal() > 0 ? "Buy" : "Sell",
+                    Side = t[2].GetDecimal() > 0 ? "buy" : "sell",
                     Amount = t[2].GetDecimal(),
                     Price = t[3].GetDecimal()
                 })
@@ -75,7 +75,8 @@ public class RestApi: IRestApi
                     ClosePrice = t[2].GetDecimal(),
                     HighPrice = t[3].GetDecimal(),
                     LowPrice = t[4].GetDecimal(),
-                    TotalVolume = t[5].GetDecimal()
+                    TotalVolume = t[5].GetDecimal(),
+                    TotalPrice = t[5].GetDecimal() * ((t[1].GetDecimal() + t[2].GetDecimal()) / 2)
                 })
                 .ToList();
 
@@ -83,7 +84,7 @@ public class RestApi: IRestApi
         }
         catch (Exception ex)
         {
-            throw new Exception("Error trade data: " + ex.Message);
+            throw new Exception("Error candle data: " + ex.Message);
         }
     }
 }

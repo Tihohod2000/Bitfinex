@@ -12,4 +12,6 @@ public interface ISocket
     event Action<Candle> CandleSeriesProcessing;
     void SubscribeCandles(string pair, int periodInSec, long? count, DateTimeOffset? from = null, DateTimeOffset? to = null);
     void UnsubscribeCandles(string pair);
+    
+    Task ConnectAsync();
 }
