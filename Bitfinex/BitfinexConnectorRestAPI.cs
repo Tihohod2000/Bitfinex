@@ -27,8 +27,8 @@ public class BitfinexConnector : ITestConnector
     public Task<IEnumerable<Trade>> GetNewTradesAsync(string pair, int maxCount) =>
         _restapi.GetNewTradesAsync(pair, maxCount);
 
-    // public Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from, long? count, DateTimeOffset? to = null) =>
-    //     _restapi.GetCandleSeriesAsync(pair, periodInSec, from, count, to);
+    public Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from, long? count, DateTimeOffset? to = null) =>
+        _restapi.GetCandleSeriesAsync(pair, periodInSec, from, count, to);
 
 
 
@@ -71,11 +71,11 @@ public class BitfinexConnector : ITestConnector
     //
     // }
 
-    public Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from,
-        long? count, DateTimeOffset? to = null)
-    {
-        throw new NotImplementedException();
-    }
+    // public Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from,
+    //     long? count, DateTimeOffset? to = null)
+    // {
+    //     throw new NotImplementedException();
+    // }
 
     public event Action<Trade>? NewBuyTrade;
     public event Action<Trade>? NewSellTrade;
