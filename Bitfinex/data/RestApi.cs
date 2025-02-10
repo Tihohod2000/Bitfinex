@@ -53,16 +53,17 @@ public class RestApi: IRestApi
     {
         // var request = new RestRequest($"trades/t{pair}/hist?limit={maxCount}&sort=-1");
         
-
+        long fromMs = from?.ToUnixTimeMilliseconds() ?? 0;
+        long toMs = to?.ToUnixTimeMilliseconds() ?? 0;
         string requestLink;
 
         if (to == null)
         {
-            requestLink = $"candles/trade:{periodInSec/60}m:{pair}:p{from.Value.Day}/hist?limit={count}";
+            requestLink = $"candles/trade:{periodInSec/60}m:{pair}/hist?start={fromMs}&limit={count}";
         }
         else
         {
-            requestLink = $"candles/trade:{periodInSec/60}m:{pair}:p{from.Value.Day}:p{to.Value.Day}/hist?limit={count}";
+            requestLink = $"candles/trade:{periodInSec/60}m:{pair}/hist?start={fromMs}&end={toMs}&limit={count}";
         }
 
         var request = new RestRequest(requestLink);

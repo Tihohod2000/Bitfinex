@@ -5,12 +5,16 @@ var restApi = new RestApi();
 var socket = new Socket();
 var connector = new BitfinexConnector(restApi, socket);
 
-var response_trade = await connector.GetNewTradesAsync("tBTCUSD", 10);
+var response_trade = await connector.GetNewTradesAsync("tBTCUSD", 24);
 Console.WriteLine(response_trade);
 
 
-DateTimeOffset? from = DateTimeOffset.UtcNow.AddDays(-20);
-DateTimeOffset? to = DateTimeOffset.UtcNow.AddDays(2);
+DateTimeOffset? from = DateTimeOffset.UtcNow.AddHours(-1);
+DateTimeOffset? to = DateTimeOffset.UtcNow.AddHours(2);
 
-var response_candle = await connector.GetCandleSeriesAsync("tBTCUSD", 60, from, 100 );
+var response_candle = await connector.GetCandleSeriesAsync("tBTCUSD", 60, from, 13, to );
 Console.WriteLine(response_candle);
+
+
+
+
