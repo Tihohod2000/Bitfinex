@@ -26,7 +26,7 @@ public class Socket : ISocket
     private async void StartReceiving()
     {
         // Получение данных
-        var buffer = new byte[1024];
+        var buffer = new byte[2048];
         while (_webSocket.State == WebSocketState.Open)
         {
             var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
@@ -47,69 +47,111 @@ public class Socket : ISocket
             {
                 var jsonDocument = JsonDocument.Parse(message);
 
-                // Проверяем событие
-                if (jsonDocument.RootElement.TryGetProperty("event", out var eventProperty) && eventProperty.GetString() == "subscribed")
+                try
                 {
-                    var channel = jsonDocument.RootElement.GetProperty("channel").GetString();
-                    var pair = jsonDocument.RootElement.GetProperty("symbol").GetString();
-                    Console.WriteLine($"Subscribed to {channel} for pair {pair}");
-                    return;
-                }
-                
-                if (jsonDocument.RootElement.ValueKind != JsonValueKind.Array || jsonDocument.RootElement.GetArrayLength() < 3)
-                {
-                    Console.WriteLine($"Не верная структура json: {message}");
-                    return;
-                }
-                
-                var eventType = jsonDocument.RootElement[1].ValueKind == JsonValueKind.String ? jsonDocument.RootElement[1].GetString() : null;
-                var data = jsonDocument.RootElement[2];
 
-
-                if (eventType == "te" || eventType == "tu")
-                {
-                    if (data.ValueKind != JsonValueKind.Array || data.GetArrayLength()<4)
+                    if (jsonDocument.RootElement.ValueKind == JsonValueKind.Object)
                     {
-                        Console.WriteLine($"Ошибка трейда данных: {message}");
+
+                        if (jsonDocument.RootElement.TryGetProperty("event", out var eventProperty))
+                        {
+
+                            // Проверяем событие
+                            if (eventProperty.GetString() == "subscribed")
+                            {
+                                var channel = jsonDocument.RootElement.GetProperty("channel").GetString();
+                                var pair = jsonDocument.RootElement.GetProperty("symbol").GetString();
+                                Console.WriteLine($"Subscribed to {channel} for pair {pair}");
+                                return;
+                            }
+
+                            Console.WriteLine(eventProperty);
+
+
+                            if (eventProperty.GetString() == "info")
+                            {
+                                // var channel = jsonDocument.RootElement.GetProperty("channel").GetString();
+                                var serverId = jsonDocument.RootElement.GetProperty("serverId").GetString();
+                                var platform = jsonDocument.RootElement.GetProperty("platform");
+                                Console.WriteLine($"Info: serverId {serverId} for platfom {platform}");
+                                return;
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    // throw;
+                }
+                
+                
+                
+                // if (jsonDocument.RootElement.ValueKind != JsonValueKind.Array || jsonDocument.RootElement.GetArrayLength() < 3)
+                // {
+                //     Console.WriteLine($"Не верная структура json: {message}");
+                //     return;
+                // }
+                
+                // Console.WriteLine(jsonDocument.RootElement);
+                // Console.WriteLine("Point");
+
+                if (jsonDocument.RootElement.ValueKind == JsonValueKind.Array &&
+                    jsonDocument.RootElement.GetArrayLength() > 2)
+                {
+                    var eventType = jsonDocument.RootElement[1].ValueKind == JsonValueKind.String
+                        ? jsonDocument.RootElement[1].GetString()
+                        : null;
+                    var data = jsonDocument.RootElement[2];
+
+
+
+
+                    if (eventType == "te" || eventType == "tu")
+                    {
+                        if (data.ValueKind != JsonValueKind.Array || data.GetArrayLength() < 4)
+                        {
+                            Console.WriteLine($"Error trade data: {message}");
+                            return;
+                        }
+
+                        var trade = new Trade
+                        {
+                            Time = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
+                            Id = data[1].GetInt64(),
+                            Amount = data[2].GetDecimal(),
+                            Price = data[3].GetDecimal(),
+                            Side = data[2].GetDecimal() > 0 ? "buy" : "sell"
+                        };
+
+                        if (trade.Side == "buy")
+                            NewBuyTrade?.Invoke(trade);
+                        else
+                            NewSellTrade?.Invoke(trade);
+
                         return;
                     }
 
-                    var trade = new Trade
+                    if (eventType == "candles")
                     {
-                        Time = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
-                        Id = data[1].GetInt64(),
-                        Amount = data[2].GetDecimal(),
-                        Price = data[3].GetDecimal(),
-                        Side = data[2].GetDecimal() > 0 ? "buy" : "sell"
-                    };
-                    
-                    if (trade.Side == "buy")
-                        NewBuyTrade?.Invoke(trade);
-                    else
-                        NewSellTrade?.Invoke(trade);
+                        if (data.ValueKind != JsonValueKind.Array || data.GetArrayLength() < 6)
+                        {
+                            Console.WriteLine($"Ошибка свечей данных: {message}");
+                            return;
+                        }
 
-                    return;
-                }
+                        var candle = new Candle
+                        {
+                            OpenTime = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
+                            OpenPrice = data[1].GetDecimal(),
+                            HighPrice = data[2].GetDecimal(),
+                            LowPrice = data[3].GetDecimal(),
+                            ClosePrice = data[4].GetDecimal(),
+                            TotalVolume = data[5].GetDecimal()
+                        };
+                        CandleSeriesProcessing?.Invoke(candle);
 
-                if (eventType == "candles")
-                {
-                    if (data.ValueKind != JsonValueKind.Array || data.GetArrayLength() < 6)
-                    {
-                        Console.WriteLine($"Ошибка свечей данных: {message}");
-                        return;
                     }
-                    
-                    var candle = new Candle
-                    {
-                        OpenTime = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
-                        OpenPrice = data[1].GetDecimal(),
-                        HighPrice = data[2].GetDecimal(),
-                        LowPrice = data[3].GetDecimal(),
-                        ClosePrice = data[4].GetDecimal(),
-                        TotalVolume = data[5].GetDecimal()
-                    };
-                    CandleSeriesProcessing?.Invoke(candle);
-                    
                 }
 
             }

@@ -15,6 +15,13 @@ DateTimeOffset? to = DateTimeOffset.UtcNow.AddHours(2);
 var response_candle = await connector.GetCandleSeriesAsync("tBTCUSD", 60, from, 13, to );
 Console.WriteLine(response_candle);
 
+await connector.ConnectAsync();
+
+connector.SubscribeTrades("BTCUSD", 101);
+await Task.Delay(400 * 1000);
+// connector.UnsubscribeTrades("BTCUSD");
+
+
 
 
 
