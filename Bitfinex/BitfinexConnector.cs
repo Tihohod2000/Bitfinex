@@ -23,10 +23,7 @@ public class BitfinexConnector : ITestConnector
         _socket = socketConnector ?? throw new ArgumentNullException(nameof(socketConnector));
     }
 
-    public async Task ConnectAsync()
-    {
-        await _socket.ConnectAsync();
-    }
+    
 
 
     public Task<IEnumerable<Trade>> GetNewTradesAsync(string pair, int maxCount) =>
@@ -35,7 +32,11 @@ public class BitfinexConnector : ITestConnector
     public Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from, long? count, DateTimeOffset? to = null) =>
         _restapi.GetCandleSeriesAsync(pair, periodInSec, from, count, to);
     
-
+    public async Task ConnectAsync()
+    {
+        await _socket.ConnectAsync();
+    }
+    
     public event Action<Trade>? NewBuyTrade;
     public event Action<Trade>? NewSellTrade;
     public void SubscribeTrades(string pair, int maxCount = 100)

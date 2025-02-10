@@ -8,7 +8,7 @@ public class RestApi: IRestApi
 {
     private readonly RestClient _client;
     
-    public RestApi(string baseUrl)
+    public RestApi(string baseUrl = "https://api.bitfinex.com/v2/")
     {
         _client = new RestClient(baseUrl);
     }
@@ -49,11 +49,26 @@ public class RestApi: IRestApi
 
     }
 
-    public async Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from, long? count, DateTimeOffset? to = null)
+    public async Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from, long? count = 120, DateTimeOffset? to = null)
     {
         // var request = new RestRequest($"trades/t{pair}/hist?limit={maxCount}&sort=-1");
-        var request = new RestRequest($"candles/trade:{periodInSec}:t{pair}/hist");
+        
+
+        string requestLink;
+
+        if (to == null)
+        {
+            requestLink = $"candles/trade:{periodInSec/60}m:{pair}:p{from.Value.Day}/hist?limit={count}";
+        }
+        else
+        {
+            requestLink = $"candles/trade:{periodInSec/60}m:{pair}:p{from.Value.Day}:p{to.Value.Day}/hist?limit={count}";
+        }
+
+        var request = new RestRequest(requestLink);
         request.AddHeader("accept", "application/json");
+        
+        Console.WriteLine(request.Resource);
 
         var response = await _client.GetAsync(request);
         if (!response.IsSuccessful || response.Content == null)
