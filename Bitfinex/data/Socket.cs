@@ -12,6 +12,8 @@ public class Socket : ISocket
     private ClientWebSocket _webSocket = new ClientWebSocket();
     private Uri _webSocketUri = new Uri("wss://api-pub.bitfinex.com/ws/2");
     
+    private readonly Dictionary<string, int> _subscriptions = new();
+    
     
     public event Action<Trade>? NewBuyTrade;
     public event Action<Trade>? NewSellTrade;
@@ -61,6 +63,8 @@ public class Socket : ISocket
                             {
                                 var channel = jsonDocument.RootElement.GetProperty("channel").GetString();
                                 var pair = jsonDocument.RootElement.GetProperty("symbol").GetString();
+                                var chanId = jsonDocument.RootElement.GetProperty("chanId").GetInt32();
+                                _subscriptions[pair] = chanId;
                                 Console.WriteLine($"Subscribed to {channel} for pair {pair}");
                                 return;
                             }
@@ -171,8 +175,15 @@ public class Socket : ISocket
     
     public void UnsubscribeTrades(string pair)
     {
-        var unsubscribeMessage = $"{{\"event\":\"unsubscribe\",\"channel\":\"trades\",\"symbol\":\"{pair}\"}}";
-        SendMessage(unsubscribeMessage);
+
+        if (_subscriptions.TryGetValue(pair, out int chanId))
+        {
+            var unsubscribeMessage = $"{{\"event\":\"unsubscribe\",\"chanId\":{chanId}}}";
+            SendMessage(unsubscribeMessage);
+            Console.WriteLine($"Unsubscribed: from {pair} chanId: {chanId}");
+        }
+        
+        
     }
     
     

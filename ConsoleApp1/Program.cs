@@ -17,9 +17,9 @@ Console.WriteLine(response_candle);
 
 await connector.ConnectAsync();
 
-connector.SubscribeTrades("BTCUSD", 101);
-await Task.Delay(400 * 1000);
-// connector.UnsubscribeTrades("BTCUSD");
+connector.SubscribeTrades("tBTCUSD", 101);
+await Task.Delay(10 * 1000);
+connector.UnsubscribeTrades("tBTCUSD");
 
 
 
