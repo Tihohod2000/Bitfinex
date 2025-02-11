@@ -17,9 +17,13 @@ Console.WriteLine(response_candle);
 
 await connector.ConnectAsync();
 
-connector.SubscribeTrades("tBTCUSD", 101);
+// connector.SubscribeTrades("tBTCUSD", 101);
+// await Task.Delay(10 * 1000);
+// connector.UnsubscribeTrades("tBTCUSD");
+
+connector.SubscribeCandles("tBTCUSD", 60,  100, from, to);
 await Task.Delay(10 * 1000);
-connector.UnsubscribeTrades("tBTCUSD");
+connector.UnsubscribeCandles("tBTCUSD");
 
 
 

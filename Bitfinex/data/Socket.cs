@@ -28,16 +28,36 @@ public class Socket : ISocket
     private async void StartReceiving()
     {
         // Получение данных
-        var buffer = new byte[2048];
-        while (_webSocket.State == WebSocketState.Open)
+        var buffer = new byte[8192];
+
+        try
         {
-            var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            if (result.MessageType == WebSocketMessageType.Text)
+            while (_webSocket.State == WebSocketState.Open)
             {
-                var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                ProcessMessage(message);
+                var fullMessage = new StringBuilder();
+                
+                WebSocketReceiveResult result;
+                do
+                {
+                    result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                    fullMessage.Append(Encoding.UTF8.GetString(buffer, 0, result.Count));
+                } while (!result.EndOfMessage);
+
+
+                if (result.MessageType == WebSocketMessageType.Text)
+                {
+                    var message = fullMessage.ToString();
+                    ProcessMessage(message);
+                }
             }
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
+       
     }
     
     
@@ -62,7 +82,17 @@ public class Socket : ISocket
                             if (eventProperty.GetString() == "subscribed")
                             {
                                 var channel = jsonDocument.RootElement.GetProperty("channel").GetString();
-                                var pair = jsonDocument.RootElement.GetProperty("symbol").GetString();
+                                string pair;
+                                if (channel == "candles")
+                                {
+                                    var key = jsonDocument.RootElement.GetProperty("key").GetString();
+                                    pair = key.Substring(key.LastIndexOf(':') + 1);
+                                }
+                                else
+                                {
+                                    pair = jsonDocument.RootElement.GetProperty("symbol").GetString();
+                                }
+                                
                                 var chanId = jsonDocument.RootElement.GetProperty("chanId").GetInt32();
                                 _subscriptions[pair] = chanId;
                                 Console.WriteLine($"Subscribed to {channel} for pair {pair}");
@@ -189,14 +219,18 @@ public class Socket : ISocket
     
     public void SubscribeCandles(string pair, int periodInSec, long? count, DateTimeOffset? from = null, DateTimeOffset? to = null)
     {
-        var subscribeMessage = $"{{\"event\":\"subscribe\",\"channel\":\"candles\",\"key\":\"trade:{periodInSec/60}m:{pair}\"}}";
+        var subscribeMessage = $"{{\"event\":\"subscribe\",\"channel\":\"candles\",\"key\":\"trade:{periodInSec/60}m:{pair}\",\"maxCount\":{count}}}";
         SendMessage(subscribeMessage);
     }
 
     public void UnsubscribeCandles(string pair)
     {
-        var unsubscribeMessage = $"{{\"event\":\"unsubscribe\",\"channel\":\"candles\",\"key\":\"trade:{pair}\"}}";
-        SendMessage(unsubscribeMessage);
+        if (_subscriptions.TryGetValue(pair, out int chanId))
+        {
+            var unsubscribeMessage = $"{{\"event\":\"unsubscribe\",\"chanId\":{chanId}}}";
+            SendMessage(unsubscribeMessage);
+            Console.WriteLine($"Unsubscribed: from {pair} chanId: {chanId}");
+        }
     }
     
     
