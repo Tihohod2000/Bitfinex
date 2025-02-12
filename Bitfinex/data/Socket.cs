@@ -120,15 +120,6 @@ public class Socket : ISocket
                 }
                 
                 
-                
-                // if (jsonDocument.RootElement.ValueKind != JsonValueKind.Array || jsonDocument.RootElement.GetArrayLength() < 3)
-                // {
-                //     Console.WriteLine($"Не верная структура json: {message}");
-                //     return;
-                // }
-                
-                // Console.WriteLine(jsonDocument.RootElement);
-                // Console.WriteLine("Point");
 
                 if (jsonDocument.RootElement.ValueKind == JsonValueKind.Array &&
                     jsonDocument.RootElement.GetArrayLength() > 2)
@@ -183,6 +174,7 @@ public class Socket : ISocket
                             ClosePrice = data[4].GetDecimal(),
                             TotalVolume = data[5].GetDecimal()
                         };
+                        
                         CandleSeriesProcessing?.Invoke(candle);
 
                     }

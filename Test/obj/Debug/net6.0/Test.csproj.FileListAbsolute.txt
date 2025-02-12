@@ -104,9 +104,9 @@ E:\Работа\Bitfinex\Test\obj\Debug\net6.0\Test.GeneratedMSBuildEditorConfig
 E:\Работа\Bitfinex\Test\obj\Debug\net6.0\Test.AssemblyInfoInputs.cache
 E:\Работа\Bitfinex\Test\obj\Debug\net6.0\Test.AssemblyInfo.cs
 E:\Работа\Bitfinex\Test\obj\Debug\net6.0\Test.csproj.CoreCompileInputs.cache
-E:\Работа\Bitfinex\Test\obj\Debug\net6.0\Test.csproj.CopyComplete
 E:\Работа\Bitfinex\Test\obj\Debug\net6.0\Test.dll
 E:\Работа\Bitfinex\Test\obj\Debug\net6.0\refint\Test.dll
 E:\Работа\Bitfinex\Test\obj\Debug\net6.0\Test.pdb
 E:\Работа\Bitfinex\Test\obj\Debug\net6.0\Test.genruntimeconfig.cache
 E:\Работа\Bitfinex\Test\obj\Debug\net6.0\ref\Test.dll
+E:\Работа\Bitfinex\Test\obj\Debug\net6.0\Test.csproj.Up2Date
