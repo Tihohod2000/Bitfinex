@@ -12,17 +12,17 @@
     </Window.DataContext>
 
     <Grid Margin="0,0,10,12">
-        <ListBox ItemsSource="{Binding Candles}" Margin="0,425,0,0" HorizontalAlignment="Left" Width="261">
+        <ListBox ItemsSource="{Binding CandleVM.Candles}" Margin="0,425,0,0" HorizontalAlignment="Left" Width="261">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
                         <TextBlock>
                             <Run Text="Валютная пара: " />
-                            <Run Text="{Binding Pair}" />
+                            <Run Text="{Binding  Pair}" />
                         </TextBlock>
                         <TextBlock>
                             <Run Text="Цена открытия: " />
-                            <Run Text="{Binding OpenPrice}" />
+                            <Run Text="{Binding  OpenPrice}" />
                         </TextBlock>
                         <TextBlock>
                             <Run Text="Цена Закрытия: " />
@@ -34,19 +34,19 @@
                         </TextBlock>
                         <TextBlock>
                             <Run Text="Минимальная цена: " />
-                            <Run Text="{Binding LowPrice}" />
+                            <Run Text="{Binding  LowPrice}" />
                         </TextBlock>
                         <TextBlock>
                             <Run Text="Общая сумма сделок: " />
-                            <Run Text="{Binding TotalPrice}" />
+                            <Run Text="{Binding  TotalPrice}" />
                         </TextBlock>
                         <TextBlock>
                             <Run Text="Общий объем: " />
-                            <Run Text="{Binding TotalVolume}" />
+                            <Run Text="{Binding  TotalVolume}" />
                         </TextBlock>
                         <TextBlock>
                             <Run Text="Время: " />
-                            <Run Text="{Binding OpenTime}" />
+                            <Run Text="{Binding  OpenTime}" />
                         </TextBlock>
                         <TextBlock>
                             <Run Text="--------------------------------------" />
@@ -56,7 +56,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ListBox ItemsSource="{Binding Trade}" Margin="332,425,0,0" HorizontalAlignment="Left" Width="252">
+        <ListBox ItemsSource="{Binding TradeVM.Trades}" Margin="332,425,0,0" HorizontalAlignment="Left" Width="252">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
@@ -81,8 +81,8 @@
                             <Run Text="{Binding Time}" />
                         </TextBlock>
                         <TextBlock>
-                             <Run Text="Время: " />
-                             <Run Text="{Binding Time}" />
+                             <Run Text="Id трейда: " />
+                             <Run Text="{Binding Id}" />
                         </TextBlock>
                         <TextBlock>
                             <Run Text="--------------------------------------" />

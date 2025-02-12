@@ -27,4 +27,4 @@ E:\Работа\Bitfinex\User\obj\Debug\net6.0-windows\refint\User.dll
 E:\Работа\Bitfinex\User\obj\Debug\net6.0-windows\User.pdb
 E:\Работа\Bitfinex\User\obj\Debug\net6.0-windows\User.genruntimeconfig.cache
 E:\Работа\Bitfinex\User\obj\Debug\net6.0-windows\ref\User.dll
-E:\Работа\Bitfinex\User\obj\Debug\net6.0-windows\User.csproj.Up2Date
+E:\Работа\Bitfinex\User\obj\Debug\net6.0-windows\User.csproj.CopyComplete
