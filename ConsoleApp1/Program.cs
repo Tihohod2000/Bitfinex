@@ -12,15 +12,37 @@ var connector = new BitfinexConnector(restApi, socket);
 DateTimeOffset? from = DateTimeOffset.UtcNow.AddHours(-1);
 DateTimeOffset? to = DateTimeOffset.UtcNow.AddHours(2);
 
-var response_candle = await connector.GetCandleSeriesAsync("tBTCUSD", 60, from, 13, to );
-Console.WriteLine(response_candle);
+// var response_candle = await connector.GetCandleSeriesAsync("tBTCUSD", 60, from, 13, to );
+// Console.WriteLine(response_candle);
+
 
 await connector.ConnectAsync();
 
-connector.SubscribeTrades("tBTCUSD", 101);
-await Task.Delay(10 * 1000);
-connector.UnsubscribeTrades("tBTCUSD");
+// socket.NewBuyTrade += trade =>
+// {
+//     Console.WriteLine($"Время: {trade.Time}");
+//     Console.WriteLine($"Id: {trade.Id}");
+//     Console.WriteLine($"Объём: {trade.Amount}");
+//     Console.WriteLine($"Цена: {trade.Price}");
+//     Console.WriteLine($"Направление: {trade.Side}");
+// };
+//
+// socket.NewSellTrade += trade =>
+// {
+//     Console.WriteLine($"Время: {trade.Time}");
+//     Console.WriteLine($"Id: {trade.Id}");
+//     Console.WriteLine($"Объём: {trade.Amount}");
+//     Console.WriteLine($"Цена: {trade.Price}");
+//     Console.WriteLine($"Направление: {trade.Side}");
+// };
+//
+// connector.SubscribeTrades("tBTCUSD", 101);
+//
+//
+// await Task.Delay(100 * 1000);
 
+// connector.UnsubscribeTrades("tBTCUSD");
+//
 connector.SubscribeCandles("tBTCUSD", 60,  100, from, to);
 await Task.Delay(10 * 1000);
 connector.UnsubscribeCandles("tBTCUSD");

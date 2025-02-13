@@ -122,60 +122,75 @@ public class Socket : ISocket
                 
 
                 if (jsonDocument.RootElement.ValueKind == JsonValueKind.Array &&
-                    jsonDocument.RootElement.GetArrayLength() > 2)
+                    jsonDocument.RootElement.GetArrayLength() >= 2)
                 {
-                    var eventType = jsonDocument.RootElement[1].ValueKind == JsonValueKind.String
-                        ? jsonDocument.RootElement[1].GetString()
-                        : null;
-                    var data = jsonDocument.RootElement[2];
-
-
-
-
-                    if (eventType == "te" || eventType == "tu")
+                    if (jsonDocument.RootElement.GetArrayLength() > 2)
                     {
-                        if (data.ValueKind != JsonValueKind.Array || data.GetArrayLength() < 4)
-                        {
-                            Console.WriteLine($"Error trade data: {message}");
-                            return;
-                        }
-
-                        var trade = new Trade
-                        {
-                            Time = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
-                            Id = data[1].GetInt64(),
-                            Amount = data[2].GetDecimal(),
-                            Price = data[3].GetDecimal(),
-                            Side = data[2].GetDecimal() > 0 ? "buy" : "sell"
-                        };
-
-                        if (trade.Side == "buy")
-                            NewBuyTrade?.Invoke(trade);
-                        else
-                            NewSellTrade?.Invoke(trade);
-
-                        return;
-                    }
-
-                    if (eventType == "candles")
-                    {
-                        if (data.ValueKind != JsonValueKind.Array || data.GetArrayLength() < 6)
-                        {
-                            Console.WriteLine($"Ошибка свечей данных: {message}");
-                            return;
-                        }
-
-                        var candle = new Candle
-                        {
-                            OpenTime = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
-                            OpenPrice = data[1].GetDecimal(),
-                            HighPrice = data[2].GetDecimal(),
-                            LowPrice = data[3].GetDecimal(),
-                            ClosePrice = data[4].GetDecimal(),
-                            TotalVolume = data[5].GetDecimal()
-                        };
+                        var eventType = jsonDocument.RootElement[1].ValueKind == JsonValueKind.String
+                            ? jsonDocument.RootElement[1].GetString()
+                            : null;
+                        var data = jsonDocument.RootElement[2];
                         
-                        CandleSeriesProcessing?.Invoke(candle);
+                        if (eventType == "te" || eventType == "tu")
+                        {
+                            if (data.ValueKind != JsonValueKind.Array || data.GetArrayLength() < 4)
+                            {
+                                Console.WriteLine($"Error trade data: {message}");
+                                return;
+                            }
+
+                            var trade = new Trade
+                            {
+                                Time = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
+                                Id = data[1].GetInt64(),
+                                Amount = data[2].GetDecimal(),
+                                Price = data[3].GetDecimal(),
+                                Side = data[2].GetDecimal() > 0 ? "buy" : "sell"
+                            };
+
+                            if (trade.Side == "buy")
+                                NewBuyTrade?.Invoke(trade);
+                            else
+                                NewSellTrade?.Invoke(trade);
+
+                        
+                        }
+                        
+                    }else if (jsonDocument.RootElement.GetArrayLength() == 2 && jsonDocument.RootElement[1].GetArrayLength() < 8)
+                    {
+                        var data = jsonDocument.RootElement[1];
+                        var eventType = jsonDocument.RootElement[0].ValueKind == JsonValueKind.String
+                            ? jsonDocument.RootElement[1].GetString()
+                            : null;
+                        
+                        if (eventType == null)
+                        {
+                            if (data.ValueKind != JsonValueKind.Array || data.GetArrayLength() < 6)
+                            {
+                                Console.WriteLine($"Ошибка свечей данных: {message}");
+                                return;
+                            }
+
+                            var candle = new Candle
+                            {
+                                OpenTime = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
+                                OpenPrice = data[1].GetDecimal(),
+                                HighPrice = data[2].GetDecimal(),
+                                LowPrice = data[3].GetDecimal(),
+                                ClosePrice = data[4].GetDecimal(),
+                                TotalVolume = data[5].GetDecimal()
+                            };
+                        
+                            CandleSeriesProcessing?.Invoke(candle);
+                    }
+                   
+
+
+
+
+                    
+
+                    
 
                     }
                 }

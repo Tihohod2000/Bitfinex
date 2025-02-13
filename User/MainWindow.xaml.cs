@@ -39,5 +39,28 @@ namespace MyWpfApp.Views
                 _mainViewModel.TradeVM.TradeInput_count;
             await  _mainViewModel.TradeVM.LoadTradesAsync(userInput_pair, userInput_count);
         }
+        
+        
+        private async void OnConnectTradesClick(object sender, RoutedEventArgs e)
+        {
+            string userInput_pair =
+                _mainViewModel.TradeVM.TradeInput_pairSocket;
+            int userInput_count =
+                _mainViewModel.TradeVM.TradeInput_countSocket;
+            await  _mainViewModel.TradeVM.ConnectTradesAsync(userInput_pair, userInput_count);
+        }
+        
+        private async void OnConnectCandlesClick(object sender, RoutedEventArgs e)
+        {
+            string userInput_pair =
+                _mainViewModel.CandleVM.CandleInput_pairSocket;
+            int userInput_count =
+                _mainViewModel.CandleVM.CandleInput_countSocket;
+            int userInput_period =
+                _mainViewModel.CandleVM.CandleInput_periodSocket;
+            DateTimeOffset from = _mainViewModel.CandleVM.CandleInput_fromSocket;
+            DateTimeOffset to = _mainViewModel.CandleVM.CandleInput_toSocket;
+            await  _mainViewModel.CandleVM.ConnectCandlesAsync(userInput_pair, userInput_period, userInput_count, from, to);
+        }
     }
 }

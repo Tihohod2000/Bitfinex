@@ -56,6 +56,9 @@ public class BitfinexConnector : ITestConnector
     {
         _socket.SubscribeCandles(pair, periodInSec, count, from, to);
     }
+    
+
+
 
     public void UnsubscribeCandles(string pair)
     {

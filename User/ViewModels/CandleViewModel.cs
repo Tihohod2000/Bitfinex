@@ -1,6 +1,7 @@
 using Bitfinex;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -14,16 +15,40 @@ namespace MyWpfApp.ViewModels
         private IEnumerable<Candle> _candles;
         private bool _isLoading;
         private readonly BitfinexConnector _bitfinexConnector;
+        private readonly RestApi _restApi;
+        private readonly Socket _socket;
         private string _candleInput_pair;
         private int _candleInput_count;
         private int _candleInput_period;
         private DateTimeOffset _candleInput_from;
         private DateTimeOffset _candleInput_to;
+        
+        private string _candleInput_pairSocket;
+        private int _candleInput_countSocket;
+        private int _candleInput_periodSocket;
+        private DateTimeOffset _candleInput_fromSocket;
+        private DateTimeOffset _candleInput_toSocket;
+        private bool _isConnected = false;
 
         public CandleViewModel()
         {
-            _bitfinexConnector = new BitfinexConnector(new RestApi(), new Socket()); 
+            _restApi = new RestApi(); 
+            _socket = new Socket();
+            _bitfinexConnector = new BitfinexConnector(_restApi, _socket); 
         }
+        
+        private ObservableCollection<Candle> _candlesSocket = new();
+
+        public ObservableCollection<Candle> CandlesSocket
+        {
+            get => _candlesSocket;
+            set
+            {
+                _candlesSocket = value;
+                OnPropertyChanged(nameof(CandlesSocket));
+            }
+        }
+        
 
         public IEnumerable<Candle> Candles
         {
@@ -103,6 +128,59 @@ namespace MyWpfApp.ViewModels
         }
         
         
+        
+        public DateTimeOffset CandleInput_fromSocket
+        {
+            get => _candleInput_fromSocket;
+            set
+            {
+                _candleInput_fromSocket = value;
+                OnPropertyChanged(nameof(CandleInput_from));
+            }
+        }
+        
+        public DateTimeOffset CandleInput_toSocket
+        {
+            get => _candleInput_toSocket;
+            set
+            {
+                _candleInput_toSocket = value;
+                OnPropertyChanged(nameof(CandleInput_to));
+            }
+        }
+        
+        public int CandleInput_countSocket
+        {
+            get => _candleInput_countSocket;
+            set
+            {
+                _candleInput_countSocket = value;
+                OnPropertyChanged(nameof(CandleInput_count));
+            }
+        }
+        
+        public int CandleInput_periodSocket
+        {
+            get => _candleInput_periodSocket;
+            set
+            {
+                _candleInput_periodSocket = value;
+                OnPropertyChanged(nameof(CandleInput_period));
+            }
+        }
+    
+    
+        public string CandleInput_pairSocket
+        {
+            get => _candleInput_pairSocket;
+            set
+            {
+                _candleInput_pairSocket = value;
+                OnPropertyChanged(nameof(CandleInput_pair));
+            }
+        }
+
+        
 
         public async Task LoadCandlesAsync(string pair, int count, int period, DateTimeOffset? from, DateTimeOffset? to = null)
         {
@@ -121,6 +199,41 @@ namespace MyWpfApp.ViewModels
             }
             IsLoading = false;
         }
+        
+        public async Task ConnectCandlesAsync( string pair, int period, int count, DateTimeOffset from, DateTimeOffset? to = null)
+        {
+            IsLoading = true;
+            try
+            {
+                // Проверяем, подключены ли мы уже
+                if (!_isConnected)
+                {
+                    await _bitfinexConnector.ConnectAsync();
+                    _isConnected = true; // Помечаем, что подключение установлено
+                }
+                _socket.CandleSeriesProcessing += candle =>
+                {
+                    CandlesSocket.Add(candle);
+                
+                    Console.WriteLine($"Валютная пара: {candle.Pair}");
+                    Console.WriteLine($"Цена открытия: {candle.OpenPrice}");
+                    Console.WriteLine($"Максимальная цена: {candle.HighPrice}");
+                    Console.WriteLine($"Минимальная цена: {candle.LowPrice}");
+                    Console.WriteLine($"Цена закрытия: {candle.ClosePrice}");
+                    Console.WriteLine($"Общая сумма сделок: {candle.TotalPrice}");
+                    Console.WriteLine($"Общий объем: {candle.TotalVolume}");
+                    Console.WriteLine($"Время: {candle.OpenTime}");
+                };
+            
+                _bitfinexConnector.SubscribeCandles(pair, period, count, from, to);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            IsLoading = false;
+        }
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
 
