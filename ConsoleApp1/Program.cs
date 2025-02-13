@@ -5,8 +5,8 @@ var restApi = new RestApi();
 var socket = new Socket();
 var connector = new BitfinexConnector(restApi, socket);
 
-var response_trade = await connector.GetNewTradesAsync("tBTCUSD", 24);
-Console.WriteLine(response_trade);
+// var response_trade = await connector.GetNewTradesAsync("tBTCUSD", 24);
+// Console.WriteLine(response_trade);
 
 
 DateTimeOffset? from = DateTimeOffset.UtcNow.AddHours(-1);

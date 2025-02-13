@@ -14,6 +14,9 @@ public class TradeViewModel : INotifyPropertyChanged
     private IEnumerable<Trade> _trades;
     private bool _isLoading;
     private readonly BitfinexConnector _bitfinexConnector;
+    private int _tradeInput_count;
+    private string _tradeInput_pair;
+   
     
     public TradeViewModel()
     {
@@ -47,18 +50,38 @@ public class TradeViewModel : INotifyPropertyChanged
     }
     
     
-    public async Task LoadTradesAsync()
+    public int TradeInput_count
+    {
+        get => _tradeInput_count;
+        set
+        {
+            _tradeInput_count = value;
+            OnPropertyChanged(nameof(TradeInput_count));
+        }
+    }
+    
+    
+    public string TradeInput_pair
+    {
+        get => _tradeInput_pair;
+        set
+        {
+            _tradeInput_pair = value;
+            OnPropertyChanged(nameof(TradeInput_pair));
+        }
+    }
+    
+    
+    public async Task LoadTradesAsync( string pair, int count)
     {
         IsLoading = true;
         try
         {
-            // Используем BitfinexConnector для получения свечей
-            var trades = await _bitfinexConnector.GetNewTradesAsync("tBTCUSD", 24);
+            var trades = await _bitfinexConnector.GetNewTradesAsync(pair, count);
             Trades = trades;
         }
         catch (Exception ex)
         {
-            // Обработка ошибок (выводить в лог или показывать пользователю)
             Console.WriteLine($"Error: {ex.Message}");
         }
         IsLoading = false;

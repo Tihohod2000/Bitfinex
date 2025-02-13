@@ -9,6 +9,7 @@ public class MainViewModel : INotifyPropertyChanged
     private CandleViewModel _candleVM = new CandleViewModel();
     private TradeViewModel _tradeVM = new TradeViewModel();
     
+
     public CandleViewModel CandleVM
     {
         get => _candleVM;
