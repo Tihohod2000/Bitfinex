@@ -8,6 +8,7 @@ public class MainViewModel : INotifyPropertyChanged
 {
     private CandleViewModel _candleVM = new CandleViewModel();
     private TradeViewModel _tradeVM = new TradeViewModel();
+    private ConvectorViewModel _convectorVM = new ConvectorViewModel();
     
 
     public CandleViewModel CandleVM
@@ -26,6 +27,16 @@ public class MainViewModel : INotifyPropertyChanged
         set
         {
             _tradeVM = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    public ConvectorViewModel ConvectorVM
+    {
+        get => _convectorVM;
+        set
+        {
+            _convectorVM = value;
             OnPropertyChanged();
         }
     }

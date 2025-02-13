@@ -62,5 +62,10 @@ namespace MyWpfApp.Views
             DateTimeOffset to = _mainViewModel.CandleVM.CandleInput_toSocket;
             await  _mainViewModel.CandleVM.ConnectCandlesAsync(userInput_pair, userInput_period, userInput_count, from, to);
         }
+
+        private async void ConvectorCurrency(object sender, RoutedEventArgs e)
+        {
+            await _mainViewModel.ConvectorVM.LoadCurrencyAsync("", "");
+        }
     }
 }

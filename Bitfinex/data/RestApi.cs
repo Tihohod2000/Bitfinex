@@ -103,4 +103,29 @@ public class RestApi: IRestApi
             throw new Exception("Error candle data: " + ex.Message);
         }
     }
+
+    public async Task<long> Convector(string currency_1, string currency_2)
+    {
+        var request = new RestRequest($"calc/fx?ccy1={currency_1}&ccy2={currency_2}", Method.Post);
+        request.AddHeader("accept", "application/json");
+
+        var response = await _client.PostAsync(request);
+        if (!response.IsSuccessful || response.Content == null)
+        {
+            throw new Exception("Error request " + response.ErrorException);
+        }
+        
+        try
+        {
+            using var doc = JsonDocument.Parse(response.Content);
+            var currency = doc.RootElement[0].GetDecimal();
+
+            return (long)currency;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error CONVECTOR data: " + ex.Message);
+        }
+    }
 }
+

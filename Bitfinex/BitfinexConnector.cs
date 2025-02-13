@@ -32,6 +32,9 @@ public class BitfinexConnector : ITestConnector
     public Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from, long? count, DateTimeOffset? to = null) =>
         _restapi.GetCandleSeriesAsync(pair, periodInSec, from, count, to);
     
+    public Task<long> Convector(string currency_1, string currency_2) =>
+        _restapi.Convector(currency_1, currency_2);
+    
     public async Task ConnectAsync()
     {
         await _socket.ConnectAsync();

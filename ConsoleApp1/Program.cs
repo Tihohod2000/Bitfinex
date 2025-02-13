@@ -1,7 +1,7 @@
 ﻿using Bitfinex;
 using Bitfinex.data;
 
-var restApi = new RestApi(); 
+var restApi = new RestApi("https://api-pub.bitfinex.com/v2/"); 
 var socket = new Socket();
 var connector = new BitfinexConnector(restApi, socket);
 
@@ -9,14 +9,17 @@ var connector = new BitfinexConnector(restApi, socket);
 // Console.WriteLine(response_trade);
 
 
-DateTimeOffset? from = DateTimeOffset.UtcNow.AddHours(-1);
-DateTimeOffset? to = DateTimeOffset.UtcNow.AddHours(2);
+// DateTimeOffset? from = DateTimeOffset.UtcNow.AddHours(-1);
+// DateTimeOffset? to = DateTimeOffset.UtcNow.AddHours(2);
 
 // var response_candle = await connector.GetCandleSeriesAsync("tBTCUSD", 60, from, 13, to );
 // Console.WriteLine(response_candle);
 
+var response_Convector = await connector.Convector("BTC", "USD");
+Console.WriteLine(response_Convector);
 
-await connector.ConnectAsync();
+
+// await connector.ConnectAsync();
 
 // socket.NewBuyTrade += trade =>
 // {
@@ -43,9 +46,9 @@ await connector.ConnectAsync();
 
 // connector.UnsubscribeTrades("tBTCUSD");
 //
-connector.SubscribeCandles("tBTCUSD", 60,  100, from, to);
-await Task.Delay(10 * 1000);
-connector.UnsubscribeCandles("tBTCUSD");
+// connector.SubscribeCandles("tBTCUSD", 60,  100, from, to);
+// await Task.Delay(10 * 1000);
+// connector.UnsubscribeCandles("tBTCUSD");
 
 
 
