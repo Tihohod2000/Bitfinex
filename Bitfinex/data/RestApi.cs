@@ -107,31 +107,6 @@ public class RestApi: IRestApi
     }
 
     
-    // public async Task<double> Convector(string currency_1, string currency_2)
-    // {
-    //     var request = new RestRequest($"calc/fx?ccy1={currency_1}&ccy2={currency_2}", Method.Post);
-    //     request.AddHeader("accept", "application/json");
-    //
-    //     var response = await _client.PostAsync(request);
-    //     if (!response.IsSuccessful || response.Content == null)
-    //     {
-    //         throw new Exception("Error request " + response.ErrorException);
-    //     }
-    //     
-    //     try
-    //     {
-    //         using var doc = JsonDocument.Parse(response.Content);
-    //         var currency = doc.RootElement[0].GetDecimal();
-    //
-    //         return (long)currency;
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         throw new Exception("Error CONVECTOR data: " + ex.Message);
-    //     }
-    // }
-
-    
     public async Task<double> Convector(string currency_1)
     {
         RestResponse response;
@@ -199,35 +174,29 @@ public class RestApi: IRestApi
             { "DSH", dash }
         };
 
-        // var Wallet = new wallet()
-        // {
-        //     BTC = btc,
-        //     XRP = xrp,
-        //     XMR = xmr,
-        //     DASH = dash
-        // };
-
         double Full_usd = 0;
-        
-  
 
         foreach (var x in valu)
         {
-            var response_Convector = Convector(x.Key).Result;
+            var response_Convector = await Convector(x.Key);  
             Full_usd += response_Convector * x.Value;
-
         }
-        
+
+        var btcRate = await Convector("BTC");
+        var xrpRate = await Convector("XRP");
+        var xmrRate = await Convector("XMR");
+        var dashRate = await Convector("DSH");
+        var ustRate = await Convector("UST");
+
         var Wallet = new wallet()
         {
-            BTC = Full_usd / Convector("BTC").Result,
-            XRP = Full_usd / Convector("XRP").Result,
-            XMR = Full_usd / Convector("XMR").Result,
-            DASH = Full_usd / Convector("DSH").Result,
-            USDT = Full_usd / Convector("UST").Result
+            BTC = Full_usd / btcRate,
+            XRP = Full_usd / xrpRate,
+            XMR = Full_usd / xmrRate,
+            DASH = Full_usd / dashRate,
+            USDT = Full_usd / ustRate
         };
-        
-        
+
         return Wallet;
     }
 }

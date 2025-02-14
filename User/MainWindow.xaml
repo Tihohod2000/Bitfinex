@@ -5,7 +5,7 @@
         xmlns:av="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:User.Views"
         xmlns:global="clr-namespace:"
-        mc:Ignorable="av" x:Class="MyWpfApp.Views.MainWindow"
+        mc:Ignorable="av" x:Class="User.MainWindow"
         Title="Candle Series" Height="736" Width="1234">
 
     <Window.DataContext>
@@ -96,17 +96,18 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <DataGrid av:ItemsSource="{av:SampleData ItemCount=5}" Margin="42,96,654,475"/>
-        <TextBox HorizontalAlignment="Left" Margin="24,37,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Margin="166,37,0,0" TextWrapping="Wrap" Text="15000" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Margin="309,37,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Margin="451,37,0,0" TextWrapping="Wrap" Text="30" VerticalAlignment="Top" Width="120"/>
+        <DataGrid Margin="42,96,654,475" ItemsSource="{Binding ConvectorVM.Wallet}" AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+        <TextBox HorizontalAlignment="Left" Margin="24,37,0,0" TextWrapping="Wrap"  Text="{Binding ConvectorVM.Wallet_btc, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="166,37,0,0" TextWrapping="Wrap" Text="{Binding ConvectorVM.Wallet_xrp, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="309,37,0,0" TextWrapping="Wrap" Text="{Binding ConvectorVM.Wallet_xmr, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="451,37,0,0" TextWrapping="Wrap" Text="{Binding ConvectorVM.Wallet_dash, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
         <Label Content="BTC" HorizontalAlignment="Left" Margin="62,6,0,0" VerticalAlignment="Top" Width="76"/>
         <Label Content="XRP" HorizontalAlignment="Left" Margin="210,6,0,0" VerticalAlignment="Top" Width="76"/>
         <Label Content="XMR " HorizontalAlignment="Left" Margin="353,6,0,0" VerticalAlignment="Top" Width="76"/>
         <Label Content="DASH" HorizontalAlignment="Left" Margin="495,6,0,0" VerticalAlignment="Top" Width="76"/>
         <Button Content="Расчет
-                " HorizontalAlignment="Left" Margin="248,71,0,0" VerticalAlignment="Top"/>
+                " HorizontalAlignment="Left" Margin="248,71,0,0" Click="ConvectorCurrency" VerticalAlignment="Top"/>
         <Label Content="Свечи" HorizontalAlignment="Left" Margin="100,233,0,0" VerticalAlignment="Top"/>
         <Label Content="Трейды" HorizontalAlignment="Left" Margin="451,233,0,0" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" Margin="160,263,0,0" TextWrapping="Wrap" Text="{Binding CandleVM.CandleInput_pair, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
