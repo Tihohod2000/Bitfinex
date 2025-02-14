@@ -55,7 +55,7 @@ namespace MyWpfApp.ViewModels
             get => _candles;
             set
             {
-                if (_candles != value)
+                if (!Equals(_candles, value))
                 {
                     _candles = value;
                     OnPropertyChanged(nameof(Candles));

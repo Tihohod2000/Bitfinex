@@ -24,12 +24,12 @@ public class ConvectorViewModel
     }
     
     
-    public async Task LoadCurrencyAsync( string currency_1, string currency_2)
+    public async Task LoadCurrencyAsync(int btc, int xrp, int xmr, int dash)
     {
         
         try
         {
-            var ratio = await _bitfinexConnector.Convector(currency_1, currency_2);
+            var ratio = await _bitfinexConnector.calc_wallet( btc, xrp, xmr, dash);
             //Переписать!!!!!!!!!!!
             
         }

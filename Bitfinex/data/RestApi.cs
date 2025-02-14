@@ -7,7 +7,9 @@ namespace Bitfinex.data;
 public class RestApi: IRestApi
 {
     private readonly RestClient _client;
-    
+    private IRestApi _restApiImplementation;
+    private IRestApi _restApiImplementation1;
+
     public RestApi(string baseUrl = "https://api.bitfinex.com/v2/")
     {
         _client = new RestClient(baseUrl);
@@ -104,21 +106,80 @@ public class RestApi: IRestApi
         }
     }
 
-    public async Task<long> Convector(string currency_1, string currency_2)
-    {
-        var request = new RestRequest($"calc/fx?ccy1={currency_1}&ccy2={currency_2}", Method.Post);
-        request.AddHeader("accept", "application/json");
+    
+    // public async Task<double> Convector(string currency_1, string currency_2)
+    // {
+    //     var request = new RestRequest($"calc/fx?ccy1={currency_1}&ccy2={currency_2}", Method.Post);
+    //     request.AddHeader("accept", "application/json");
+    //
+    //     var response = await _client.PostAsync(request);
+    //     if (!response.IsSuccessful || response.Content == null)
+    //     {
+    //         throw new Exception("Error request " + response.ErrorException);
+    //     }
+    //     
+    //     try
+    //     {
+    //         using var doc = JsonDocument.Parse(response.Content);
+    //         var currency = doc.RootElement[0].GetDecimal();
+    //
+    //         return (long)currency;
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         throw new Exception("Error CONVECTOR data: " + ex.Message);
+    //     }
+    // }
 
-        var response = await _client.PostAsync(request);
-        if (!response.IsSuccessful || response.Content == null)
+    
+    public async Task<double> Convector(string currency_1)
+    {
+        RestResponse response;
+        
+        try
         {
-            throw new Exception("Error request " + response.ErrorException);
+            var request = new RestRequest($"ticker/t{currency_1}USD", Method.Get);
+            request.AddHeader("accept", "application/json");
+
+             response = await _client.GetAsync(request);
+            if (!response.IsSuccessful || response.Content == null)
+            {
+                throw new Exception("Error request " + response.ErrorException);
+            }
+
         }
+        catch (Exception e)
+        {
+            try
+            {
+                var request = new RestRequest($"ticker/tUST{currency_1}", Method.Get);
+                request.AddHeader("accept", "application/json");
+
+                response = await _client.GetAsync(request);
+                if (!response.IsSuccessful || response.Content == null)
+                {
+                    throw new Exception("Error request " + response.ErrorException);
+                }
+            }
+            catch (Exception exception)
+            {
+                var request = new RestRequest($"ticker/t{currency_1}USD", Method.Get);
+                request.AddHeader("accept", "application/json");
+
+                response = await _client.GetAsync(request);
+                if (!response.IsSuccessful || response.Content == null)
+                {
+                    throw new Exception("Error request " + response.ErrorException);
+                }
+            }
+            
+        }
+        
         
         try
         {
             using var doc = JsonDocument.Parse(response.Content);
-            var currency = doc.RootElement[0].GetDecimal();
+            var currency = doc.RootElement[6].GetDecimal();
 
             return (long)currency;
         }
@@ -126,6 +187,48 @@ public class RestApi: IRestApi
         {
             throw new Exception("Error CONVECTOR data: " + ex.Message);
         }
+    }
+    
+    public async Task<wallet> calc_wallet(int btc, int xrp, int xmr, int dash)
+    {
+        var valu = new Dictionary<string, int>
+        {
+            { "BTC", btc },
+            { "XRP", xrp },
+            { "XMR", xmr },
+            { "DSH", dash }
+        };
+
+        // var Wallet = new wallet()
+        // {
+        //     BTC = btc,
+        //     XRP = xrp,
+        //     XMR = xmr,
+        //     DASH = dash
+        // };
+
+        double Full_usd = 0;
+        
+  
+
+        foreach (var x in valu)
+        {
+            var response_Convector = Convector(x.Key).Result;
+            Full_usd += response_Convector * x.Value;
+
+        }
+        
+        var Wallet = new wallet()
+        {
+            BTC = Full_usd / Convector("BTC").Result,
+            XRP = Full_usd / Convector("XRP").Result,
+            XMR = Full_usd / Convector("XMR").Result,
+            DASH = Full_usd / Convector("DSH").Result,
+            USDT = Full_usd / Convector("UST").Result
+        };
+        
+        
+        return Wallet;
     }
 }
 
