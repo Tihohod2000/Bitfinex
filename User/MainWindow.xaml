@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:av="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:User.Views"
-        xmlns:global="clr-namespace:"
         xmlns:converter="clr-namespace:User.Converter"
         mc:Ignorable="av" x:Class="User.MainWindow"
         Title="Candle Series" Height="736" Width="1234">
@@ -11,7 +10,7 @@
     <Window.DataContext>
         <views:MainViewModel />
     </Window.DataContext>
-    
+
     <Window.Resources>
         <converter:DateTimeOffsetToStringConverter x:Key="DateTimeConverter"/>
     </Window.Resources>
@@ -221,6 +220,8 @@
         <Label Content="Количество" HorizontalAlignment="Left" Margin="974,378,0,0" VerticalAlignment="Top"/>
         <Button Content="Подписаться" HorizontalAlignment="Left" Margin="857,150,0,0" VerticalAlignment="Top" Click="OnConnectCandlesClick" Width="99"/>
         <Button Content="Подписаться" HorizontalAlignment="Left" Margin="857,427,0,0" VerticalAlignment="Top" Click="OnConnectTradesClick" Width="99"/>
+        <Button Content="Отписаться" HorizontalAlignment="Left" Margin="741,150,0,0" VerticalAlignment="Top" Click="UnconnectCandlesClick" Width="99"/>
+        <Button Content="Отписаться" HorizontalAlignment="Left" Margin="741,427,0,0" VerticalAlignment="Top" Click="UnconnectTradesClick" Width="99"/>
 
     </Grid>
 </Window>

@@ -75,7 +75,7 @@ namespace User
             string userInputPair =
                 _mainViewModel.CandleVm.CandleInputPairSocket;
 
-            // await  _mainViewModel.CandleVm.UnconnectTradesAsync(userInputPair);
+            await  _mainViewModel.CandleVm.UnConnectCandlesAsync(userInputPair);
         }
         
         

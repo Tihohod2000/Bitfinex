@@ -4,12 +4,13 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Bitfinex;
 using Bitfinex.data;
+using ConnectorTest;
 
 namespace User.ViewModels;
 
 public class ConvectorViewModel : INotifyPropertyChanged
 {
-    private readonly BitfinexConnector _bitfinexConnector;
+    private readonly ITestConnector _bitfinexConnector;
     private ObservableCollection<Wallet> _wallet;
     private bool _isLoading;
     private int _btc;

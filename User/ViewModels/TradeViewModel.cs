@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Bitfinex;
 using Bitfinex.data;
+using ConnectorTest;
 using TestHQ;
 
 namespace User.ViewModels;
@@ -13,7 +14,7 @@ public class TradeViewModel : INotifyPropertyChanged
 {
     private IEnumerable<Trade> _trades;
     private bool _isLoading;
-    private readonly BitfinexConnector _bitfinexConnector;
+    private readonly ITestConnector _bitfinexConnector;
     private readonly RestApi _restApi;
     private readonly Socket _socket;
     private int _tradeInputCount;
@@ -174,7 +175,7 @@ public class TradeViewModel : INotifyPropertyChanged
 
     public async Task UnConnectTradesAsync(string pair)
     {
-        _bitfinexConnector.UnsubscribeCandles(pair);
+        _bitfinexConnector.UnsubscribeTrades(pair);
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

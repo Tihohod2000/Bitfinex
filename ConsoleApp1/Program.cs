@@ -1,10 +1,11 @@
 ﻿using Bitfinex;
 using Bitfinex.data;
+using ConnectorTest;
 
 var restApi = new RestApi(); 
 // var restApi = new RestApi("https://api-pub.bitfinex.com/v2/"); 
 var socket = new Socket();
-var connector = new BitfinexConnector(restApi, socket);
+ITestConnector connector = new BitfinexConnector(restApi, socket);
 
 // var response_trade = await connector.GetNewTradesAsync("tBTCUSD", 24);
 // Console.WriteLine(response_trade);
@@ -23,8 +24,8 @@ var response_wallet = await connector.calc_wallet(10, 10, 10, 10);
 Console.WriteLine(response_wallet);
 
 
-// await connector.ConnectAsync();
-//
+await connector.ConnectAsync();
+
 // socket.NewBuyTrade += trade =>
 // {
 //     Console.WriteLine($"Время: {trade.Time}");
@@ -49,9 +50,9 @@ Console.WriteLine(response_wallet);
 // await Task.Delay(10 * 1000);
 //
 // connector.UnsubscribeTrades("tBTCUSD");
-//
-// connector.SubscribeCandles("tBTCUSD", 60,  100, from, to);
-// await Task.Delay(10 * 1000);
+
+connector.SubscribeCandles("tBTCUSD", 60,  100, from, to);
+await Task.Delay(1000 * 1000);
 // connector.UnsubscribeCandles("tBTCUSD");
 
 

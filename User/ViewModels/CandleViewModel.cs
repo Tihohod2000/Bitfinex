@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Bitfinex;
 using Bitfinex.data;
+using ConnectorTest;
 using TestHQ;
 
 namespace User.ViewModels
@@ -13,7 +14,7 @@ namespace User.ViewModels
     {
         private IEnumerable<Candle> _candles;
         private bool _isLoading;
-        private readonly BitfinexConnector _bitfinexConnector;
+        private readonly ITestConnector _bitfinexConnector;
         private readonly RestApi _restApi;
         private readonly Socket _socket;
         private string _candleInputPair;
@@ -232,6 +233,11 @@ namespace User.ViewModels
                 Console.WriteLine($"Error: {ex.Message}");
             }
             IsLoading = false;
+        }
+        
+        public async Task UnConnectCandlesAsync(string pair)
+        {
+            _bitfinexConnector.UnsubscribeCandles(pair);
         }
         
 

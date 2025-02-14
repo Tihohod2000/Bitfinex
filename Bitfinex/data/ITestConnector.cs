@@ -1,8 +1,9 @@
-﻿using TestHQ;
+﻿using Bitfinex.data;
+using TestHQ;
 
 namespace ConnectorTest
 {
-    interface ITestConnector
+    public interface ITestConnector
     {
         #region Rest
 
@@ -25,6 +26,9 @@ namespace ConnectorTest
 
         #endregion
         
+        
+        Task<Wallet> calc_wallet(int btc, int xrp, int xmr, int dash);
+        Task ConnectAsync();
 
     }
 }
