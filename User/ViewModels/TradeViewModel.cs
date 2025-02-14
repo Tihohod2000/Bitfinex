@@ -1,14 +1,13 @@
-using Bitfinex;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Windows.Input;
+using Bitfinex;
 using Bitfinex.data;
 using TestHQ;
 
-namespace MyWpfApp.ViewModels;
+namespace User.ViewModels;
 
 public class TradeViewModel : INotifyPropertyChanged
 {
@@ -17,10 +16,10 @@ public class TradeViewModel : INotifyPropertyChanged
     private readonly BitfinexConnector _bitfinexConnector;
     private readonly RestApi _restApi;
     private readonly Socket _socket;
-    private int _tradeInput_count;
-    private int _tradeInput_countSocket;
-    private string _tradeInput_pair;
-    private string _tradeInput_pairSocket;
+    private int _tradeInputCount;
+    private int _tradeInputCountSocket;
+    private string _tradeInputPair;
+    private string _tradeInputPairSocket;
     private bool _isConnected = false;
     
    
@@ -49,7 +48,7 @@ public class TradeViewModel : INotifyPropertyChanged
         get => _trades;
         set
         {
-            if (_trades != value)
+            if (!Equals(_trades, value))
             {
                 _trades = value;
                 OnPropertyChanged(nameof(Trades));
@@ -71,46 +70,46 @@ public class TradeViewModel : INotifyPropertyChanged
     }
     
     
-    public int TradeInput_count
+    public int TradeInputCount
     {
-        get => _tradeInput_count;
+        get => _tradeInputCount;
         set
         {
-            _tradeInput_count = value;
-            OnPropertyChanged(nameof(TradeInput_count));
+            _tradeInputCount = value;
+            OnPropertyChanged(nameof(TradeInputCount));
         }
     }
     
     
-    public string TradeInput_pair
+    public string TradeInputPair
     {
-        get => _tradeInput_pair;
+        get => _tradeInputPair;
         set
         {
-            _tradeInput_pair = value;
-            OnPropertyChanged(nameof(TradeInput_pair));
+            _tradeInputPair = value;
+            OnPropertyChanged(nameof(TradeInputPair));
         }
     }
     
     
-    public int TradeInput_countSocket
+    public int TradeInputCountSocket
     {
-        get => _tradeInput_countSocket;
+        get => _tradeInputCountSocket;
         set
         {
-            _tradeInput_countSocket = value;
-            OnPropertyChanged(nameof(TradeInput_countSocket));
+            _tradeInputCountSocket = value;
+            OnPropertyChanged(nameof(TradeInputCountSocket));
         }
     }
     
     
-    public string TradeInput_pairSocket
+    public string TradeInputPairSocket
     {
-        get => _tradeInput_pairSocket;
+        get => _tradeInputPairSocket;
         set
         {
-            _tradeInput_pairSocket = value;
-            OnPropertyChanged(nameof(TradeInput_pairSocket));
+            _tradeInputPairSocket = value;
+            OnPropertyChanged(nameof(TradeInputPairSocket));
         }
     }
     
@@ -172,8 +171,13 @@ public class TradeViewModel : INotifyPropertyChanged
         }
         IsLoading = false;
     }
-    
-    public event PropertyChangedEventHandler PropertyChanged;
+
+    public async Task UnConnectTradesAsync(string pair)
+    {
+        _bitfinexConnector.UnsubscribeCandles(pair);
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
     
     protected void OnPropertyChanged(string propertyName)
     {

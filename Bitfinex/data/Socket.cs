@@ -1,6 +1,5 @@
 using TestHQ;
-using System;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text.Json;
 using System.Text;
@@ -86,11 +85,12 @@ public class Socket : ISocket
                                 if (channel == "candles")
                                 {
                                     var key = jsonDocument.RootElement.GetProperty("key").GetString();
+                                    Debug.Assert(key != null, nameof(key) + " != null");
                                     pair = key.Substring(key.LastIndexOf(':') + 1);
                                 }
                                 else
                                 {
-                                    pair = jsonDocument.RootElement.GetProperty("symbol").GetString();
+                                    pair = jsonDocument.RootElement.GetProperty("symbol").GetString() ?? throw new InvalidOperationException();
                                 }
                                 
                                 var chanId = jsonDocument.RootElement.GetProperty("chanId").GetInt32();

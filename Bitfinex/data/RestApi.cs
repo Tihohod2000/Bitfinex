@@ -7,8 +7,6 @@ namespace Bitfinex.data;
 public class RestApi: IRestApi
 {
     private readonly RestClient _client;
-    private IRestApi _restApiImplementation;
-    private IRestApi _restApiImplementation1;
 
     public RestApi(string baseUrl = "https://api.bitfinex.com/v2/")
     {
@@ -82,7 +80,7 @@ public class RestApi: IRestApi
         try
         {
             using var doc = JsonDocument.Parse(response.Content);
-            var Candles = doc.RootElement.EnumerateArray()
+            var candles = doc.RootElement.EnumerateArray()
                 .Select(t => new Candle
                 {
                     // Id = t[0].GetInt64(),
@@ -98,7 +96,7 @@ public class RestApi: IRestApi
                 })
                 .ToList();
 
-            return Candles;
+            return candles;
         }
         catch (Exception ex)
         {
@@ -107,13 +105,13 @@ public class RestApi: IRestApi
     }
 
     
-    public async Task<double> Convector(string currency_1)
+    public async Task<double> Convector(string currency)
     {
         RestResponse response;
         
         try
         {
-            var request = new RestRequest($"ticker/t{currency_1}USD", Method.Get);
+            var request = new RestRequest($"ticker/t{currency}USD");
             request.AddHeader("accept", "application/json");
 
              response = await _client.GetAsync(request);
@@ -123,11 +121,11 @@ public class RestApi: IRestApi
             }
 
         }
-        catch (Exception e)
+        catch (Exception)
         {
             try
             {
-                var request = new RestRequest($"ticker/tUST{currency_1}", Method.Get);
+                var request = new RestRequest($"ticker/tUST{currency}");
                 request.AddHeader("accept", "application/json");
 
                 response = await _client.GetAsync(request);
@@ -136,9 +134,9 @@ public class RestApi: IRestApi
                     throw new Exception("Error request " + response.ErrorException);
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                var request = new RestRequest($"ticker/t{currency_1}USD", Method.Get);
+                var request = new RestRequest($"ticker/t{currency}USD");
                 request.AddHeader("accept", "application/json");
 
                 response = await _client.GetAsync(request);
@@ -154,9 +152,9 @@ public class RestApi: IRestApi
         try
         {
             using var doc = JsonDocument.Parse(response.Content);
-            var currency = doc.RootElement[6].GetDecimal();
+            var currencyInt = doc.RootElement[6].GetDecimal();
 
-            return (long)currency;
+            return (long)currencyInt;
         }
         catch (Exception ex)
         {
@@ -164,7 +162,7 @@ public class RestApi: IRestApi
         }
     }
     
-    public async Task<wallet> calc_wallet(int btc, int xrp, int xmr, int dash)
+    public async Task<Wallet> calc_wallet(int btc, int xrp, int xmr, int dash)
     {
         var valu = new Dictionary<string, int>
         {
@@ -174,12 +172,12 @@ public class RestApi: IRestApi
             { "DSH", dash }
         };
 
-        double Full_usd = 0;
+        double fullUsd = 0;
 
         foreach (var x in valu)
         {
-            var response_Convector = await Convector(x.Key);  
-            Full_usd += response_Convector * x.Value;
+            var responseConvector = await Convector(x.Key);  
+            fullUsd += responseConvector * x.Value;
         }
 
         var btcRate = await Convector("BTC");
@@ -188,16 +186,16 @@ public class RestApi: IRestApi
         var dashRate = await Convector("DSH");
         var ustRate = await Convector("UST");
 
-        var Wallet = new wallet()
+        var wallet = new Wallet()
         {
-            BTC = Full_usd / btcRate,
-            XRP = Full_usd / xrpRate,
-            XMR = Full_usd / xmrRate,
-            DASH = Full_usd / dashRate,
-            USDT = Full_usd / ustRate
+            Btc = fullUsd / btcRate,
+            Xrp = fullUsd / xrpRate,
+            Xmr = fullUsd / xmrRate,
+            Dash = fullUsd / dashRate,
+            Usdt = fullUsd / ustRate
         };
 
-        return Wallet;
+        return wallet;
     }
 }
 

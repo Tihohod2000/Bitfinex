@@ -1,48 +1,48 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using MyWpfApp.ViewModels;
+using User.ViewModels;
 
 namespace User.Views;
 
 public class MainViewModel : INotifyPropertyChanged
 {
-    private CandleViewModel _candleVM = new CandleViewModel();
-    private TradeViewModel _tradeVM = new TradeViewModel();
-    private ConvectorViewModel _convectorVM = new ConvectorViewModel();
+    private CandleViewModel _candleVm = new CandleViewModel();
+    private TradeViewModel _tradeVm = new TradeViewModel();
+    private ConvectorViewModel _convectorVm = new ConvectorViewModel();
     
 
-    public CandleViewModel CandleVM
+    public CandleViewModel CandleVm
     {
-        get => _candleVM;
+        get => _candleVm;
         set
         {
-            _candleVM = value;
+            _candleVm = value;
             OnPropertyChanged();
         }
     }
 
-    public TradeViewModel TradeVM
+    public TradeViewModel TradeVm
     {
-        get => _tradeVM;
+        get => _tradeVm;
         set
         {
-            _tradeVM = value;
+            _tradeVm = value;
             OnPropertyChanged();
         }
     }
     
-    public ConvectorViewModel ConvectorVM
+    public ConvectorViewModel ConvectorVm
     {
-        get => _convectorVM;
+        get => _convectorVm;
         set
         {
-            _convectorVM = value;
+            _convectorVm = value;
             OnPropertyChanged();
         }
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

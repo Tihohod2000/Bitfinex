@@ -1,13 +1,6 @@
 ﻿using ConnectorTest;
 using TestHQ;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
 using Bitfinex.data;
-using RestSharp;
 
 namespace Bitfinex;
 
@@ -32,10 +25,10 @@ public class BitfinexConnector : ITestConnector
     public Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from, long? count, DateTimeOffset? to = null) =>
         _restapi.GetCandleSeriesAsync(pair, periodInSec, from, count, to);
     
-    public Task<double> Convector(string currency_1) =>
-        _restapi.Convector(currency_1);
+    public Task<double> Convector(string currency) =>
+        _restapi.Convector(currency);
     
-    public Task<wallet>  calc_wallet(int btc, int xrp, int xmr, int dash) =>
+    public Task<Wallet>  calc_wallet(int btc, int xrp, int xmr, int dash) =>
         _restapi.calc_wallet(btc, xrp, xmr, dash);
     
     public async Task ConnectAsync()

@@ -17,58 +17,79 @@ namespace User
         private async void OnLoadCandlesClick(object sender, RoutedEventArgs e)
         {
             string userInputPair =
-                _mainViewModel.CandleVM.CandleInput_pair;
+                _mainViewModel.CandleVm.CandleInputPair;
             int userInputCount =
-                _mainViewModel.CandleVM.CandleInput_count;
+                _mainViewModel.CandleVm.CandleInputCount;
             int userInputPeriod =
-                _mainViewModel.CandleVM.CandleInput_period;
+                _mainViewModel.CandleVm.CandleInputPeriod;
             DateTimeOffset userInputFrom =
-                _mainViewModel.CandleVM.CandleInput_from;
+                _mainViewModel.CandleVm.CandleInputFrom;
             DateTimeOffset userInputTo =
-                _mainViewModel.CandleVM.CandleInput_to;
-            await _mainViewModel.CandleVM.LoadCandlesAsync(userInputPair, userInputCount, userInputPeriod, userInputFrom, userInputTo);
+                _mainViewModel.CandleVm.CandleInputTo;
+            await _mainViewModel.CandleVm.LoadCandlesAsync(userInputPair, userInputCount, userInputPeriod, userInputFrom, userInputTo);
         }
         
         private async void OnLoadTradesClick(object sender, RoutedEventArgs e)
         {
             string userInputPair =
-            _mainViewModel.TradeVM.TradeInput_pair;
+            _mainViewModel.TradeVm.TradeInputPair;
             int userInputCount =
-                _mainViewModel.TradeVM.TradeInput_count;
-            await  _mainViewModel.TradeVM.LoadTradesAsync(userInputPair, userInputCount);
+                _mainViewModel.TradeVm.TradeInputCount;
+            await  _mainViewModel.TradeVm.LoadTradesAsync(userInputPair, userInputCount);
         }
         
         
         private async void OnConnectTradesClick(object sender, RoutedEventArgs e)
         {
             string userInputPair =
-                _mainViewModel.TradeVM.TradeInput_pairSocket;
+                _mainViewModel.TradeVm.TradeInputPairSocket;
             int userInputCount =
-                _mainViewModel.TradeVM.TradeInput_countSocket;
-            await  _mainViewModel.TradeVM.ConnectTradesAsync(userInputPair, userInputCount);
+                _mainViewModel.TradeVm.TradeInputCountSocket;
+            await  _mainViewModel.TradeVm.ConnectTradesAsync(userInputPair, userInputCount);
+        }
+        
+        
+        private async void UnconnectTradesClick(object sender, RoutedEventArgs e)
+        {
+            string userInputPair =
+                _mainViewModel.TradeVm.TradeInputPairSocket;
+
+            await  _mainViewModel.TradeVm.UnConnectTradesAsync(userInputPair);
         }
         
         private async void OnConnectCandlesClick(object sender, RoutedEventArgs e)
         {
             string userInputPair =
-                _mainViewModel.CandleVM.CandleInput_pairSocket;
+                _mainViewModel.CandleVm.CandleInputPairSocket;
             int userInputCount =
-                _mainViewModel.CandleVM.CandleInput_countSocket;
+                _mainViewModel.CandleVm.CandleInputCountSocket;
             int userInputPeriod =
-                _mainViewModel.CandleVM.CandleInput_periodSocket;
-            DateTimeOffset from = _mainViewModel.CandleVM.CandleInput_fromSocket;
-            DateTimeOffset to = _mainViewModel.CandleVM.CandleInput_toSocket;
-            await  _mainViewModel.CandleVM.ConnectCandlesAsync(userInputPair, userInputPeriod, userInputCount, from, to);
+                _mainViewModel.CandleVm.CandleInputPeriodSocket;
+            DateTimeOffset from = _mainViewModel.CandleVm.CandleInputFromSocket;
+            DateTimeOffset to = _mainViewModel.CandleVm.CandleInputToSocket;
+            await  _mainViewModel.CandleVm.ConnectCandlesAsync(userInputPair, userInputPeriod, userInputCount, from, to);
         }
+        
+        private async void UnconnectCandlesClick(object sender, RoutedEventArgs e)
+        {
+            string userInputPair =
+                _mainViewModel.CandleVm.CandleInputPairSocket;
+
+            // await  _mainViewModel.CandleVm.UnconnectTradesAsync(userInputPair);
+        }
+        
+        
 
         private async void ConvectorCurrency(object sender, RoutedEventArgs e)
         {
-            int btc = _mainViewModel.ConvectorVM.Wallet_btc;
-            int xrp = _mainViewModel.ConvectorVM.Wallet_xrp;
-            int xmr = _mainViewModel.ConvectorVM.Wallet_xmr;
-            int dash = _mainViewModel.ConvectorVM.Wallet_dash;
-            await _mainViewModel.ConvectorVM.LoadCurrencyAsync(btc, xrp, xmr, dash);
+            int btc = _mainViewModel.ConvectorVm.WalletBtc;
+            int xrp = _mainViewModel.ConvectorVm.WalletXrp;
+            int xmr = _mainViewModel.ConvectorVm.WalletXmr;
+            int dash = _mainViewModel.ConvectorVm.WalletDash;
+            await _mainViewModel.ConvectorVm.LoadCurrencyAsync(btc, xrp, xmr, dash);
         }
+        
+        
 
     }
 }

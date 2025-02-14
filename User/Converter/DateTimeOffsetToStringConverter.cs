@@ -2,9 +2,11 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
+namespace User.Converter;
+
 public class DateTimeOffsetToStringConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is DateTimeOffset dto)
         {
@@ -13,7 +15,7 @@ public class DateTimeOffsetToStringConverter : IValueConverter
         return string.Empty;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (DateTimeOffset.TryParse(value as string, out DateTimeOffset result))
         {

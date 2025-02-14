@@ -1,14 +1,13 @@
-using Bitfinex;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Windows.Input;
+using Bitfinex;
 using Bitfinex.data;
 using TestHQ;
 
-namespace MyWpfApp.ViewModels
+namespace User.ViewModels
 {
     public class CandleViewModel : INotifyPropertyChanged
     {
@@ -17,17 +16,17 @@ namespace MyWpfApp.ViewModels
         private readonly BitfinexConnector _bitfinexConnector;
         private readonly RestApi _restApi;
         private readonly Socket _socket;
-        private string _candleInput_pair;
-        private int _candleInput_count;
-        private int _candleInput_period;
-        private DateTimeOffset _candleInput_from;
-        private DateTimeOffset _candleInput_to;
+        private string _candleInputPair;
+        private int _candleInputCount;
+        private int _candleInputPeriod;
+        private DateTimeOffset _candleInputFrom;
+        private DateTimeOffset _candleInputTo;
         
-        private string _candleInput_pairSocket;
-        private int _candleInput_countSocket;
-        private int _candleInput_periodSocket;
-        private DateTimeOffset _candleInput_fromSocket;
-        private DateTimeOffset _candleInput_toSocket;
+        private string _candleInputPairSocket;
+        private int _candleInputCountSocket;
+        private int _candleInputPeriodSocket;
+        private DateTimeOffset _candleInputFromSocket;
+        private DateTimeOffset _candleInputToSocket;
         private bool _isConnected = false;
 
         public CandleViewModel()
@@ -76,107 +75,108 @@ namespace MyWpfApp.ViewModels
             }
         }
         
-        public DateTimeOffset CandleInput_from
+        
+        public DateTimeOffset CandleInputFrom
         {
-            get => _candleInput_from;
+            get => _candleInputFrom;
             set
             {
-                _candleInput_from = value;
-                OnPropertyChanged(nameof(CandleInput_from));
+                _candleInputFrom = value;
+                OnPropertyChanged(nameof(CandleInputFrom));
             }
         }
         
-        public DateTimeOffset CandleInput_to
+        public DateTimeOffset CandleInputTo
         {
-            get => _candleInput_to;
+            get => _candleInputTo;
             set
             {
-                _candleInput_to = value;
-                OnPropertyChanged(nameof(CandleInput_to));
+                _candleInputTo = value;
+                OnPropertyChanged(nameof(CandleInputTo));
             }
         }
         
-        public int CandleInput_count
+        public int CandleInputCount
         {
-            get => _candleInput_count;
+            get => _candleInputCount;
             set
             {
-                _candleInput_count = value;
-                OnPropertyChanged(nameof(CandleInput_count));
+                _candleInputCount = value;
+                OnPropertyChanged(nameof(CandleInputCount));
             }
         }
         
-        public int CandleInput_period
+        public int CandleInputPeriod
         {
-            get => _candleInput_period;
+            get => _candleInputPeriod;
             set
             {
-                _candleInput_period = value;
-                OnPropertyChanged(nameof(CandleInput_period));
-            }
-        }
-    
-    
-        public string CandleInput_pair
-        {
-            get => _candleInput_pair;
-            set
-            {
-                _candleInput_pair = value;
-                OnPropertyChanged(nameof(CandleInput_pair));
-            }
-        }
-        
-        
-        
-        public DateTimeOffset CandleInput_fromSocket
-        {
-            get => _candleInput_fromSocket;
-            set
-            {
-                _candleInput_fromSocket = value;
-                OnPropertyChanged(nameof(CandleInput_from));
-            }
-        }
-        
-        public DateTimeOffset CandleInput_toSocket
-        {
-            get => _candleInput_toSocket;
-            set
-            {
-                _candleInput_toSocket = value;
-                OnPropertyChanged(nameof(CandleInput_to));
-            }
-        }
-        
-        public int CandleInput_countSocket
-        {
-            get => _candleInput_countSocket;
-            set
-            {
-                _candleInput_countSocket = value;
-                OnPropertyChanged(nameof(CandleInput_count));
-            }
-        }
-        
-        public int CandleInput_periodSocket
-        {
-            get => _candleInput_periodSocket;
-            set
-            {
-                _candleInput_periodSocket = value;
-                OnPropertyChanged(nameof(CandleInput_period));
+                _candleInputPeriod = value;
+                OnPropertyChanged(nameof(CandleInputPeriod));
             }
         }
     
     
-        public string CandleInput_pairSocket
+        public string CandleInputPair
         {
-            get => _candleInput_pairSocket;
+            get => _candleInputPair;
             set
             {
-                _candleInput_pairSocket = value;
-                OnPropertyChanged(nameof(CandleInput_pair));
+                _candleInputPair = value;
+                OnPropertyChanged(nameof(CandleInputPair));
+            }
+        }
+        
+        
+        
+        public DateTimeOffset CandleInputFromSocket
+        {
+            get => _candleInputFromSocket;
+            set
+            {
+                _candleInputFromSocket = value;
+                OnPropertyChanged(nameof(CandleInputFrom));
+            }
+        }
+        
+        public DateTimeOffset CandleInputToSocket
+        {
+            get => _candleInputToSocket;
+            set
+            {
+                _candleInputToSocket = value;
+                OnPropertyChanged(nameof(CandleInputTo));
+            }
+        }
+        
+        public int CandleInputCountSocket
+        {
+            get => _candleInputCountSocket;
+            set
+            {
+                _candleInputCountSocket = value;
+                OnPropertyChanged(nameof(CandleInputCount));
+            }
+        }
+        
+        public int CandleInputPeriodSocket
+        {
+            get => _candleInputPeriodSocket;
+            set
+            {
+                _candleInputPeriodSocket = value;
+                OnPropertyChanged(nameof(CandleInputPeriod));
+            }
+        }
+    
+    
+        public string CandleInputPairSocket
+        {
+            get => _candleInputPairSocket;
+            set
+            {
+                _candleInputPairSocket = value;
+                OnPropertyChanged(nameof(CandleInputPair));
             }
         }
 
@@ -235,7 +235,7 @@ namespace MyWpfApp.ViewModels
         }
         
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {

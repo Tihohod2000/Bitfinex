@@ -10,11 +10,11 @@ var connector = new BitfinexConnector(restApi, socket);
 // Console.WriteLine(response_trade);
 
 
-// DateTimeOffset? from = DateTimeOffset.UtcNow.AddHours(-1);
-// DateTimeOffset? to = DateTimeOffset.UtcNow.AddHours(2);
-//
-// var response_candle = await connector.GetCandleSeriesAsync("tBTCUSD", 60, from, 13, to );
-// Console.WriteLine(response_candle);
+DateTimeOffset? from = DateTimeOffset.UtcNow.AddHours(-1);
+DateTimeOffset? to = DateTimeOffset.UtcNow.AddHours(2);
+
+var response_candle = await connector.GetCandleSeriesAsync("tBTCUSD", 60, from, 13, to );
+Console.WriteLine(response_candle);
 //
 // var response_Convector = await connector.Convector("XRP");
 // Console.WriteLine(response_Convector);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using TestHQ;
+﻿using TestHQ;
 
 namespace ConnectorTest
 {
@@ -27,12 +24,7 @@ namespace ConnectorTest
         void UnsubscribeCandles(string pair);
 
         #endregion
-
-        #region Convector
-
         
-
-        #endregion
 
     }
 }

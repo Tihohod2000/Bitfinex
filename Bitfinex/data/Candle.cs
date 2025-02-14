@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace TestHQ
 {
     public class Candle
@@ -11,7 +6,7 @@ namespace TestHQ
         /// <summary>
         /// Валютная пара
         /// </summary>
-        public string Pair { get; set; }
+        public string? Pair { get; set; }
 
         /// <summary>
         /// Цена открытия

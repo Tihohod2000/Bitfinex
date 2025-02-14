@@ -1,29 +1,29 @@
 namespace Bitfinex.data;
 
-public class wallet
+public class Wallet
 {
     /// <summary>
     /// USDT
     /// </summary>
-    public double USDT { get; set; }
+    public double Usdt { get; set; }
     
     /// <summary>
     /// BTC
     /// </summary>
-    public double BTC { get; set; }
+    public double Btc { get; set; }
     
     /// <summary>
     /// XRP
     /// </summary>
-    public double XRP { get; set; }
+    public double Xrp { get; set; }
     
     /// <summary>
     /// XMR
     /// </summary>
-    public double XMR { get; set; }
+    public double Xmr { get; set; }
     
     /// <summary>
     /// DASH
     /// </summary>
-    public double DASH { get; set; }
+    public double Dash { get; set; }
 }

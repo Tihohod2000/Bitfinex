@@ -1,35 +1,32 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Bitfinex;
 using Bitfinex.data;
 
-namespace MyWpfApp.ViewModels;
+namespace User.ViewModels;
 
 public class ConvectorViewModel : INotifyPropertyChanged
 {
     private readonly BitfinexConnector _bitfinexConnector;
-    private readonly RestApi _restApi;
-    private readonly Socket _socket;
-    private ObservableCollection<wallet> _wallet;
+    private ObservableCollection<Wallet> _wallet;
     private bool _isLoading;
-    private int _BTC;
-    private int _XRP;
-    private int _XMR;
-    private int _DASH;
+    private int _btc;
+    private int _xrp;
+    private int _xmr;
+    private int _dash;
     
     public ConvectorViewModel()
     {
-        _restApi = new RestApi(); 
-        _socket = new Socket();
-        _bitfinexConnector = new BitfinexConnector(_restApi, _socket);
-        _wallet = new ObservableCollection<wallet>();
+        var restApi = new RestApi(); 
+        var socket = new Socket();
+        _bitfinexConnector = new BitfinexConnector(restApi, socket);
+        _wallet = new ObservableCollection<Wallet>();
     }
     
     
-    public ObservableCollection<wallet> Wallet
+    public ObservableCollection<Wallet> Wallet
     {
         get => _wallet;
         set
@@ -42,43 +39,43 @@ public class ConvectorViewModel : INotifyPropertyChanged
         }
     }
     
-    public int Wallet_btc
+    public int WalletBtc
     {
-        get => _BTC;
+        get => _btc;
         set
         {
-            _BTC = value;
-            OnPropertyChanged(nameof(Wallet_btc));
+            _btc = value;
+            OnPropertyChanged(nameof(WalletBtc));
         }
     }
     
-    public int Wallet_xmr
+    public int WalletXmr
     {
-        get => _XMR;
+        get => _xmr;
         set
         {
-            _XMR = value;
-            OnPropertyChanged(nameof(Wallet_xmr));
+            _xmr = value;
+            OnPropertyChanged(nameof(WalletXmr));
         }
     }
     
-    public int Wallet_xrp
+    public int WalletXrp
     {
-        get => _XRP;
+        get => _xrp;
         set
         {
-            _XRP = value;
-            OnPropertyChanged(nameof(Wallet_xrp));
+            _xrp = value;
+            OnPropertyChanged(nameof(WalletXrp));
         }
     }
     
-    public int Wallet_dash
+    public int WalletDash
     {
-        get => _DASH;
+        get => _dash;
         set
         {
-            _DASH = value;
-            OnPropertyChanged(nameof(Wallet_dash));
+            _dash = value;
+            OnPropertyChanged(nameof(WalletDash));
         }
     }
     
@@ -101,7 +98,7 @@ public class ConvectorViewModel : INotifyPropertyChanged
         IsLoading = true;
         try
         {
-            wallet wallet = await _bitfinexConnector.calc_wallet(btc, xrp, xmr, dash);
+            Wallet wallet = await _bitfinexConnector.calc_wallet(btc, xrp, xmr, dash);
             Wallet.Clear(); // Очистка текущего списка перед добавлением новых данных
             Wallet.Add(wallet);
 
