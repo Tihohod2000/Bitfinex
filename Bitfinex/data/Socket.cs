@@ -12,6 +12,12 @@ public class Socket : ISocket
     private Uri _webSocketUri = new Uri("wss://api-pub.bitfinex.com/ws/2");
 
     private readonly Dictionary<string, int> _subscriptions = new();
+    private static readonly Dictionary<int, string> AvailablePeriods = new()
+    {
+        { 60, "1m" }, { 300, "5m" }, { 900, "15m" }, { 1800, "30m" }, { 3600, "1h" },
+        { 10800, "3h" }, { 21600, "6h" }, { 43200, "12h" }, { 86400, "1D" }, { 604800, "1W" },
+        { 1209600, "14D" }, { 2592000, "1M" }
+    };
 
 
     public event Action<Trade>? NewBuyTrade;
@@ -80,7 +86,7 @@ public class Socket : ISocket
                             if (channel == "candles")
                             {
                                 var key = jsonDocument.RootElement.GetProperty("key").GetString();
-                                Debug.Assert(key != null, nameof(key) + " != null");
+                                // Debug.Assert(key != null, nameof(key) + " != null");
                                 pair = key.Substring(key.LastIndexOf(':') + 1);
                             }
                             else
@@ -100,7 +106,6 @@ public class Socket : ISocket
 
                         if (eventProperty.GetString() == "info")
                         {
-                            // var channel = jsonDocument.RootElement.GetProperty("channel").GetString();
                             var serverId = jsonDocument.RootElement.GetProperty("serverId").GetString();
                             var platform = jsonDocument.RootElement.GetProperty("platform");
                             Console.WriteLine($"Info: serverId {serverId} for platfom {platform}");
@@ -205,12 +210,18 @@ public class Socket : ISocket
         }
     }
 
-
+    private static string ConvertPeriod(int periodInSec)
+    {
+        int closestPeriod = AvailablePeriods.Keys.OrderBy(p => Math.Abs(p - periodInSec)).First();
+        return AvailablePeriods[closestPeriod];
+    }
+    
     public void SubscribeCandles(string pair, int periodInSec, long? count, DateTimeOffset? from = null,
         DateTimeOffset? to = null)
     {
+        string period = ConvertPeriod(periodInSec);
         var subscribeMessage =
-            $"{{\"event\":\"subscribe\",\"channel\":\"candles\",\"key\":\"trade:{periodInSec / 60}m:{pair}\",\"maxCount\":{count}}}";
+            $"{{\"event\":\"subscribe\",\"channel\":\"candles\",\"key\":\"trade:{period}:{pair}\",\"maxCount\":{count}}}";
         SendMessage(subscribeMessage);
     }
 

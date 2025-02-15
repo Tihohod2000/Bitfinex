@@ -7,6 +7,12 @@ namespace Bitfinex.data;
 public class RestApi: IRestApi
 {
     private readonly RestClient _client;
+    private static readonly Dictionary<int, string> AvailablePeriods = new()
+    {
+        { 60, "1m" }, { 300, "5m" }, { 900, "15m" }, { 1800, "30m" }, { 3600, "1h" },
+        { 10800, "3h" }, { 21600, "6h" }, { 43200, "12h" }, { 86400, "1D" }, { 604800, "1W" },
+        { 1209600, "14D" }, { 2592000, "1M" }
+    };
 
     public RestApi(string baseUrl = "https://api.bitfinex.com/v2/")
     {
@@ -48,6 +54,14 @@ public class RestApi: IRestApi
 
 
     }
+    
+    private static string ConvertPeriod(int periodInSec)
+    {
+        int closestPeriod = AvailablePeriods.Keys.OrderBy(p => Math.Abs(p - periodInSec)).First();
+        return AvailablePeriods[closestPeriod];
+    }
+    
+    
 
     public async Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from, long? count = 120, DateTimeOffset? to = null)
     {
@@ -56,14 +70,15 @@ public class RestApi: IRestApi
         long fromMs = from?.ToUnixTimeMilliseconds() ?? 0;
         long toMs = to?.ToUnixTimeMilliseconds() ?? 0;
         string requestLink;
+        string period = ConvertPeriod(periodInSec);
 
         if (to == null)
         {
-            requestLink = $"candles/trade:{periodInSec/60}m:{pair}/hist?start={fromMs}&limit={count}";
+            requestLink = $"candles/trade:{period}:{pair}/hist?start={fromMs}&limit={count}";
         }
         else
         {
-            requestLink = $"candles/trade:{periodInSec/60}m:{pair}/hist?start={fromMs}&end={toMs}&limit={count}";
+            requestLink = $"candles/trade:{period}:{pair}/hist?start={fromMs}&end={toMs}&limit={count}";
         }
 
         var request = new RestRequest(requestLink);
@@ -83,10 +98,8 @@ public class RestApi: IRestApi
             var candles = doc.RootElement.EnumerateArray()
                 .Select(t => new Candle
                 {
-                    // Id = t[0].GetInt64(),
                     Pair = pair,
                     OpenTime = DateTimeOffset.FromUnixTimeMilliseconds(t[0].GetInt64()),
-                    // Side = t[2].GetDecimal() > 0 ? "Buy" : "Sell",
                     OpenPrice = t[1].GetDecimal(),
                     ClosePrice = t[2].GetDecimal(),
                     HighPrice = t[3].GetDecimal(),
@@ -119,7 +132,6 @@ public class RestApi: IRestApi
             {
                 throw new Exception("Error request " + response.ErrorException);
             }
-
         }
         catch (Exception)
         {
@@ -134,18 +146,10 @@ public class RestApi: IRestApi
                     throw new Exception("Error request " + response.ErrorException);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                var request = new RestRequest($"ticker/t{currency}USD");
-                request.AddHeader("accept", "application/json");
-
-                response = await _client.GetAsync(request);
-                if (!response.IsSuccessful || response.Content == null)
-                {
-                    throw new Exception("Error request " + response.ErrorException);
-                }
+                throw new Exception("Error CONVECTOR data: " + ex.Message);
             }
-            
         }
         
         
@@ -164,7 +168,7 @@ public class RestApi: IRestApi
     
     public async Task<Wallet> calc_wallet(int btc, int xrp, int xmr, int dash)
     {
-        var valu = new Dictionary<string, int>
+        var valueWallet = new Dictionary<string, int>
         {
             { "BTC", btc },
             { "XRP", xrp },
@@ -172,27 +176,27 @@ public class RestApi: IRestApi
             { "DSH", dash }
         };
 
-        double fullUsd = 0;
+        double AllCurrenciesInDollars = 0;
 
-        foreach (var x in valu)
+        foreach (var x in valueWallet)
         {
             var responseConvector = await Convector(x.Key);  
-            fullUsd += responseConvector * x.Value;
+            AllCurrenciesInDollars += responseConvector * x.Value;
         }
 
-        var btcRate = await Convector("BTC");
-        var xrpRate = await Convector("XRP");
-        var xmrRate = await Convector("XMR");
-        var dashRate = await Convector("DSH");
-        var ustRate = await Convector("UST");
+        var btcRatio = await Convector("BTC");
+        var xrpRatio = await Convector("XRP");
+        var xmrRatio = await Convector("XMR");
+        var dashRatio = await Convector("DSH");
+        var ustRatio = await Convector("UST");
 
         var wallet = new Wallet()
         {
-            Btc = fullUsd / btcRate,
-            Xrp = fullUsd / xrpRate,
-            Xmr = fullUsd / xmrRate,
-            Dash = fullUsd / dashRate,
-            Usdt = fullUsd / ustRate
+            Btc = AllCurrenciesInDollars / btcRatio,
+            Xrp = AllCurrenciesInDollars / xrpRatio,
+            Xmr = AllCurrenciesInDollars / xmrRatio,
+            Dash = AllCurrenciesInDollars / dashRatio,
+            Usdt = AllCurrenciesInDollars / ustRatio
         };
 
         return wallet;

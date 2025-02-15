@@ -22,7 +22,7 @@ namespace User.ViewModels
         private int _candleInputPeriod;
         private DateTimeOffset _candleInputFrom;
         private DateTimeOffset _candleInputTo;
-        
+
         private string _candleInputPairSocket;
         private int _candleInputCountSocket;
         private int _candleInputPeriodSocket;
@@ -32,11 +32,11 @@ namespace User.ViewModels
 
         public CandleViewModel()
         {
-            _restApi = new RestApi(); 
+            _restApi = new RestApi();
             _socket = new Socket();
-            _bitfinexConnector = new BitfinexConnector(_restApi, _socket); 
+            _bitfinexConnector = new BitfinexConnector(_restApi, _socket);
         }
-        
+
         private ObservableCollection<Candle> _candlesSocket = new();
 
         public ObservableCollection<Candle> CandlesSocket
@@ -48,7 +48,7 @@ namespace User.ViewModels
                 OnPropertyChanged(nameof(CandlesSocket));
             }
         }
-        
+
 
         public IEnumerable<Candle> Candles
         {
@@ -75,8 +75,8 @@ namespace User.ViewModels
                 }
             }
         }
-        
-        
+
+
         public DateTimeOffset CandleInputFrom
         {
             get => _candleInputFrom;
@@ -86,7 +86,7 @@ namespace User.ViewModels
                 OnPropertyChanged(nameof(CandleInputFrom));
             }
         }
-        
+
         public DateTimeOffset CandleInputTo
         {
             get => _candleInputTo;
@@ -96,7 +96,7 @@ namespace User.ViewModels
                 OnPropertyChanged(nameof(CandleInputTo));
             }
         }
-        
+
         public int CandleInputCount
         {
             get => _candleInputCount;
@@ -106,7 +106,7 @@ namespace User.ViewModels
                 OnPropertyChanged(nameof(CandleInputCount));
             }
         }
-        
+
         public int CandleInputPeriod
         {
             get => _candleInputPeriod;
@@ -116,8 +116,8 @@ namespace User.ViewModels
                 OnPropertyChanged(nameof(CandleInputPeriod));
             }
         }
-    
-    
+
+
         public string CandleInputPair
         {
             get => _candleInputPair;
@@ -127,9 +127,8 @@ namespace User.ViewModels
                 OnPropertyChanged(nameof(CandleInputPair));
             }
         }
-        
-        
-        
+
+
         public DateTimeOffset CandleInputFromSocket
         {
             get => _candleInputFromSocket;
@@ -139,7 +138,7 @@ namespace User.ViewModels
                 OnPropertyChanged(nameof(CandleInputFrom));
             }
         }
-        
+
         public DateTimeOffset CandleInputToSocket
         {
             get => _candleInputToSocket;
@@ -149,7 +148,7 @@ namespace User.ViewModels
                 OnPropertyChanged(nameof(CandleInputTo));
             }
         }
-        
+
         public int CandleInputCountSocket
         {
             get => _candleInputCountSocket;
@@ -159,7 +158,7 @@ namespace User.ViewModels
                 OnPropertyChanged(nameof(CandleInputCount));
             }
         }
-        
+
         public int CandleInputPeriodSocket
         {
             get => _candleInputPeriodSocket;
@@ -169,8 +168,8 @@ namespace User.ViewModels
                 OnPropertyChanged(nameof(CandleInputPeriod));
             }
         }
-    
-    
+
+
         public string CandleInputPairSocket
         {
             get => _candleInputPairSocket;
@@ -181,9 +180,9 @@ namespace User.ViewModels
             }
         }
 
-        
 
-        public async Task LoadCandlesAsync(string pair, int count, int period, DateTimeOffset? from, DateTimeOffset? to = null)
+        public async Task LoadCandlesAsync(string pair, int count, int period, DateTimeOffset? from,
+            DateTimeOffset? to = null)
         {
             // tBTCUSD
             IsLoading = true;
@@ -198,10 +197,12 @@ namespace User.ViewModels
                 // Обработка ошибок (выводить в лог или показывать пользователю)
                 Console.WriteLine($"Error: {ex.Message}");
             }
+
             IsLoading = false;
         }
-        
-        public async Task ConnectCandlesAsync( string pair, int period, int count, DateTimeOffset from, DateTimeOffset? to = null)
+
+        public async Task ConnectCandlesAsync(string pair, int period, int count, DateTimeOffset from,
+            DateTimeOffset? to = null)
         {
             IsLoading = true;
             try
@@ -212,10 +213,11 @@ namespace User.ViewModels
                     await _bitfinexConnector.ConnectAsync();
                     _isConnected = true; // Помечаем, что подключение установлено
                 }
+
                 _socket.CandleSeriesProcessing += candle =>
                 {
                     CandlesSocket.Add(candle);
-                
+
                     Console.WriteLine($"Валютная пара: {candle.Pair}");
                     Console.WriteLine($"Цена открытия: {candle.OpenPrice}");
                     Console.WriteLine($"Максимальная цена: {candle.HighPrice}");
@@ -225,21 +227,22 @@ namespace User.ViewModels
                     Console.WriteLine($"Общий объем: {candle.TotalVolume}");
                     Console.WriteLine($"Время: {candle.OpenTime}");
                 };
-            
+
                 _bitfinexConnector.SubscribeCandles(pair, period, count, from, to);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
+
             IsLoading = false;
         }
-        
+
         public async Task UnConnectCandlesAsync(string pair)
         {
             _bitfinexConnector.UnsubscribeCandles(pair);
         }
-        
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

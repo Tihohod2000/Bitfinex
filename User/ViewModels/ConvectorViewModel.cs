@@ -17,16 +17,16 @@ public class ConvectorViewModel : INotifyPropertyChanged
     private int _xrp;
     private int _xmr;
     private int _dash;
-    
+
     public ConvectorViewModel()
     {
-        var restApi = new RestApi(); 
+        var restApi = new RestApi();
         var socket = new Socket();
         _bitfinexConnector = new BitfinexConnector(restApi, socket);
         _wallet = new ObservableCollection<Wallet>();
     }
-    
-    
+
+
     public ObservableCollection<Wallet> Wallet
     {
         get => _wallet;
@@ -39,7 +39,7 @@ public class ConvectorViewModel : INotifyPropertyChanged
             }
         }
     }
-    
+
     public int WalletBtc
     {
         get => _btc;
@@ -49,7 +49,7 @@ public class ConvectorViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(WalletBtc));
         }
     }
-    
+
     public int WalletXmr
     {
         get => _xmr;
@@ -59,7 +59,7 @@ public class ConvectorViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(WalletXmr));
         }
     }
-    
+
     public int WalletXrp
     {
         get => _xrp;
@@ -69,7 +69,7 @@ public class ConvectorViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(WalletXrp));
         }
     }
-    
+
     public int WalletDash
     {
         get => _dash;
@@ -79,7 +79,7 @@ public class ConvectorViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(WalletDash));
         }
     }
-    
+
     public bool IsLoading
     {
         get => _isLoading;
@@ -92,8 +92,8 @@ public class ConvectorViewModel : INotifyPropertyChanged
             }
         }
     }
-    
-    
+
+
     public async Task LoadCurrencyAsync(int btc, int xrp, int xmr, int dash)
     {
         IsLoading = true;
@@ -102,16 +102,16 @@ public class ConvectorViewModel : INotifyPropertyChanged
             Wallet wallet = await _bitfinexConnector.calc_wallet(btc, xrp, xmr, dash);
             Wallet.Clear(); // Очистка текущего списка перед добавлением новых данных
             Wallet.Add(wallet);
-
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
+
         IsLoading = false;
     }
-    
-    
+
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected void OnPropertyChanged(string propertyName)
