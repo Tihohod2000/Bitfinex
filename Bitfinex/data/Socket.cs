@@ -12,12 +12,6 @@ public class Socket : ISocket
     private Uri _webSocketUri = new Uri("wss://api-pub.bitfinex.com/ws/2");
 
     private readonly Dictionary<string, int> _subscriptions = new();
-    private static readonly Dictionary<int, string> AvailablePeriods = new()
-    {
-        { 60, "1m" }, { 300, "5m" }, { 900, "15m" }, { 1800, "30m" }, { 3600, "1h" },
-        { 10800, "3h" }, { 21600, "6h" }, { 43200, "12h" }, { 86400, "1D" }, { 604800, "1W" },
-        { 1209600, "14D" }, { 2592000, "1M" }
-    };
 
 
     public event Action<Trade>? NewBuyTrade;
@@ -154,7 +148,8 @@ public class Socket : ISocket
                             NewSellTrade?.Invoke(trade);
                     }
                 }
-                else if (jsonDocument.RootElement.GetArrayLength() == 2 && (jsonDocument.RootElement[1].ValueKind == JsonValueKind.Array) &&
+                else if (jsonDocument.RootElement.GetArrayLength() == 2 &&
+                         (jsonDocument.RootElement[1].ValueKind == JsonValueKind.Array) &&
                          jsonDocument.RootElement[1].GetArrayLength() < 8)
                 {
                     var data = jsonDocument.RootElement[1];
@@ -210,16 +205,11 @@ public class Socket : ISocket
         }
     }
 
-    private static string ConvertPeriod(int periodInSec)
-    {
-        int closestPeriod = AvailablePeriods.Keys.OrderBy(p => Math.Abs(p - periodInSec)).First();
-        return AvailablePeriods[closestPeriod];
-    }
-    
+
     public void SubscribeCandles(string pair, int periodInSec, long? count, DateTimeOffset? from = null,
         DateTimeOffset? to = null)
     {
-        string period = ConvertPeriod(periodInSec);
+        string period = ConvertPeriod.ConvPeriod(periodInSec);
         var subscribeMessage =
             $"{{\"event\":\"subscribe\",\"channel\":\"candles\",\"key\":\"trade:{period}:{pair}\",\"maxCount\":{count}}}";
         SendMessage(subscribeMessage);

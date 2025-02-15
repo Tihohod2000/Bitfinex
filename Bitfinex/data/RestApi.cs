@@ -4,21 +4,16 @@ using TestHQ;
 
 namespace Bitfinex.data;
 
-public class RestApi: IRestApi
+public class RestApi : IRestApi
 {
     private readonly RestClient _client;
-    private static readonly Dictionary<int, string> AvailablePeriods = new()
-    {
-        { 60, "1m" }, { 300, "5m" }, { 900, "15m" }, { 1800, "30m" }, { 3600, "1h" },
-        { 10800, "3h" }, { 21600, "6h" }, { 43200, "12h" }, { 86400, "1D" }, { 604800, "1W" },
-        { 1209600, "14D" }, { 2592000, "1M" }
-    };
+
 
     public RestApi(string baseUrl = "https://api.bitfinex.com/v2/")
     {
         _client = new RestClient(baseUrl);
     }
-    
+
     public async Task<IEnumerable<Trade>> GetNewTradesAsync(string pair, int maxCount)
     {
         var request = new RestRequest($"trades/{pair}/hist?limit={maxCount}&sort=-1");
@@ -51,26 +46,18 @@ public class RestApi: IRestApi
         {
             throw new Exception("Error trade data: " + ex.Message);
         }
-
-
     }
-    
-    private static string ConvertPeriod(int periodInSec)
-    {
-        int closestPeriod = AvailablePeriods.Keys.OrderBy(p => Math.Abs(p - periodInSec)).First();
-        return AvailablePeriods[closestPeriod];
-    }
-    
-    
 
-    public async Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from, long? count = 120, DateTimeOffset? to = null)
+
+    public async Task<IEnumerable<Candle>> GetCandleSeriesAsync(string pair, int periodInSec, DateTimeOffset? from,
+        long? count = 120, DateTimeOffset? to = null)
     {
         // var request = new RestRequest($"trades/t{pair}/hist?limit={maxCount}&sort=-1");
-        
+
         long fromMs = from?.ToUnixTimeMilliseconds() ?? 0;
         long toMs = to?.ToUnixTimeMilliseconds() ?? 0;
         string requestLink;
-        string period = ConvertPeriod(periodInSec);
+        string period = ConvertPeriod.ConvPeriod(periodInSec);
 
         if (to == null)
         {
@@ -83,7 +70,7 @@ public class RestApi: IRestApi
 
         var request = new RestRequest(requestLink);
         request.AddHeader("accept", "application/json");
-        
+
         Console.WriteLine(request.Resource);
 
         var response = await _client.GetAsync(request);
@@ -117,17 +104,17 @@ public class RestApi: IRestApi
         }
     }
 
-    
+
     public async Task<double> Convector(string currency)
     {
         RestResponse response;
-        
+
         try
         {
             var request = new RestRequest($"ticker/t{currency}USD");
             request.AddHeader("accept", "application/json");
 
-             response = await _client.GetAsync(request);
+            response = await _client.GetAsync(request);
             if (!response.IsSuccessful || response.Content == null)
             {
                 throw new Exception("Error request " + response.ErrorException);
@@ -151,8 +138,8 @@ public class RestApi: IRestApi
                 throw new Exception("Error CONVECTOR data: " + ex.Message);
             }
         }
-        
-        
+
+
         try
         {
             using var doc = JsonDocument.Parse(response.Content);
@@ -165,7 +152,7 @@ public class RestApi: IRestApi
             throw new Exception("Error CONVECTOR data: " + ex.Message);
         }
     }
-    
+
     public async Task<Wallet> calc_wallet(int btc, int xrp, int xmr, int dash)
     {
         var valueWallet = new Dictionary<string, int>
@@ -176,12 +163,12 @@ public class RestApi: IRestApi
             { "DSH", dash }
         };
 
-        double AllCurrenciesInDollars = 0;
+        double allCurrenciesInDollars = 0;
 
         foreach (var x in valueWallet)
         {
-            var responseConvector = await Convector(x.Key);  
-            AllCurrenciesInDollars += responseConvector * x.Value;
+            var responseConvector = await Convector(x.Key);
+            allCurrenciesInDollars += responseConvector * x.Value;
         }
 
         var btcRatio = await Convector("BTC");
@@ -192,14 +179,13 @@ public class RestApi: IRestApi
 
         var wallet = new Wallet()
         {
-            Btc = AllCurrenciesInDollars / btcRatio,
-            Xrp = AllCurrenciesInDollars / xrpRatio,
-            Xmr = AllCurrenciesInDollars / xmrRatio,
-            Dash = AllCurrenciesInDollars / dashRatio,
-            Usdt = AllCurrenciesInDollars / ustRatio
+            Btc = allCurrenciesInDollars / btcRatio,
+            Xrp = allCurrenciesInDollars / xrpRatio,
+            Xmr = allCurrenciesInDollars / xmrRatio,
+            Dash = allCurrenciesInDollars / dashRatio,
+            Usdt = allCurrenciesInDollars / ustRatio
         };
 
         return wallet;
     }
 }
-
