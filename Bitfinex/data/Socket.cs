@@ -124,6 +124,7 @@ public class Socket : ISocket
                         ? jsonDocument.RootElement[1].GetString()
                         : null;
                     var data = jsonDocument.RootElement[2];
+                    var id = jsonDocument.RootElement[0].GetInt64();
 
                     if (eventType == "te" || eventType == "tu")
                     {
@@ -137,6 +138,7 @@ public class Socket : ISocket
                         {
                             Time = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
                             Id = data[1].GetInt64(),
+                            Pair = _subscriptions.FirstOrDefault(x => x.Value == id).Key,
                             Amount = data[2].GetDecimal(),
                             Price = data[3].GetDecimal(),
                             Side = data[2].GetDecimal() > 0 ? "buy" : "sell"
@@ -156,6 +158,7 @@ public class Socket : ISocket
                     var eventType = jsonDocument.RootElement[0].ValueKind == JsonValueKind.String
                         ? jsonDocument.RootElement[1].GetString()
                         : null;
+                    var id = jsonDocument.RootElement[0].GetInt64();
 
                     if (eventType == null)
                     {
@@ -169,6 +172,7 @@ public class Socket : ISocket
                         {
                             OpenTime = DateTimeOffset.FromUnixTimeMilliseconds(data[0].GetInt64()),
                             OpenPrice = data[1].GetDecimal(),
+                            Pair = _subscriptions.FirstOrDefault(x => x.Value == id).Key,
                             HighPrice = data[2].GetDecimal(),
                             LowPrice = data[3].GetDecimal(),
                             ClosePrice = data[4].GetDecimal(),
