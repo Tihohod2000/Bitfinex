@@ -23,3 +23,78 @@
 Чтобы отписаться, нужно ввести валютную пару в соответствующем окне и нать кнопку "Отписаться".
 
 ![image](https://github.com/user-attachments/assets/0d36e51b-3866-4d8e-952c-3c20f095068a)
+
+
+Пример использования коннектора
+Сначала нужно указать зависимости и создать коннектор
+
+```using Bitfinex;
+using Bitfinex.data;
+using ConnectorTest;
+
+var restApi = new RestApi();
+var socket = new Socket();
+ITestConnector connector = new BitfinexConnector(restApi, socket);
+```
+
+RestApi запрос получения трейдов
+```
+var response_trade = await connector.GetNewTradesAsync("tBTCUSD", 24);
+```
+
+RestApi запрос получения свечей
+```
+DateTimeOffset? from = DateTimeOffset.UtcNow.AddHours(-1);
+DateTimeOffset? to = DateTimeOffset.UtcNow.AddHours(2);
+
+var responseCandle = await connector.GetCandleSeriesAsync("tBTCUSD", 60, from, 13, to );
+```
+
+Конверктор валют, работает через RestApi
+```
+var responseWallet = await connector.calc_wallet(10, 10, 10, 10);
+```
+
+Socket подписка на трейды
+```
+await connector.ConnectAsync();
+
+socket.NewBuyTrade += trade =>
+{
+     Console.WriteLine($"Время: {trade.Time}");
+     Console.WriteLine($"Id: {trade.Id}");
+     Console.WriteLine($"Объём: {trade.Amount}");
+     Console.WriteLine($"Цена: {trade.Price}");
+     Console.WriteLine($"Направление: {trade.Side}");
+};
+
+socket.NewSellTrade += trade =>
+{
+     Console.WriteLine($"Время: {trade.Time}");
+     Console.WriteLine($"Id: {trade.Id}");
+     Console.WriteLine($"Объём: {trade.Amount}");
+     Console.WriteLine($"Цена: {trade.Price}");
+     Console.WriteLine($"Направление: {trade.Side}");
+};
+
+connector.SubscribeTrades("tBTCUSD", 101);
+await Task.Delay(100 * 1000);
+```
+Отписка от трейды
+```
+connector.UnsubscribeTrades("tBTCUSD");
+```
+
+аналогичная подписка на свечи
+```
+DateTimeOffset? from = DateTimeOffset.UtcNow.AddHours(-1);
+DateTimeOffset? to = DateTimeOffset.UtcNow.AddHours(2);
+
+connector.SubscribeCandles("tBTCUSD", 60,  100, from, to);
+await Task.Delay(20 * 1000);
+```
+
+Отписка от свечей
+```
+connector.UnsubscribeCandles("tBTCUSD");
+```
