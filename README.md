@@ -1,5 +1,10 @@
 Решение тестового задания
 
+Библиотека и GUI FPW MVVM
+
+Библиотека коннектор для работы с биржей Bitfinex
+Реализован коннектор под исходный интерфейс на C# (Class Library). Сделан в отдельном проекте простой вывод на GUI Framework (WPF) на основе паттерна MVVM
+
 Пример использования программы User
 
 ![image](https://github.com/user-attachments/assets/d21bd276-0a78-4bf4-8631-f2873f5050d2)
@@ -18,11 +23,11 @@
 
 Для подписок аналогично.
 
-![image](https://github.com/user-attachments/assets/d5360f2d-b174-4005-a301-8bd326eec996)
+![image](https://github.com/user-attachments/assets/62de1178-45cf-4a19-885b-f54cd51bd1ad)
 
 Чтобы отписаться, нужно ввести валютную пару в соответствующем окне и нать кнопку "Отписаться".
 
-![image](https://github.com/user-attachments/assets/0d36e51b-3866-4d8e-952c-3c20f095068a)
+![image](https://github.com/user-attachments/assets/3212923d-11bb-466c-a961-2f8fa36d6861)
 
 
 Пример использования коннектора
