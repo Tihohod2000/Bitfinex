@@ -1,0 +1,229 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:av="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:User.Views"
+        xmlns:converter="clr-namespace:User.Converter"
+        mc:Ignorable="av" x:Class="User.MainWindow"
+        Title="User" Height="736" Width="1234"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <views:MainViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <converter:DateTimeOffsetToStringConverter x:Key="DateTimeConverter"/>
+    </Window.Resources>
+
+    <Grid Margin="0,0,10,12">
+        <ListBox ItemsSource="{Binding CandleVm.Candles}" Margin="10,425,0,0" HorizontalAlignment="Left" Width="261">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock>
+                            <Run Text="Валютная пара: " />
+                            <Run Text="{Binding  Pair}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Цена открытия: " />
+                            <Run Text="{Binding  OpenPrice}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Цена Закрытия: " />
+                            <Run Text="{Binding ClosePrice}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Максимальная цена: " />
+                            <Run Text="{Binding HighPrice}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Минимальная цена: " />
+                            <Run Text="{Binding  LowPrice}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Общая сумма сделок: " />
+                            <Run Text="{Binding  TotalPrice}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Общий объем: " />
+                            <Run Text="{Binding  TotalVolume}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Время: " />
+                            <Run Text="{Binding  OpenTime}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="--------------------------------------" />
+                        </TextBlock>
+
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <ListBox ItemsSource="{Binding TradeVm.Trades}" Margin="332,425,0,0" HorizontalAlignment="Left" Width="252">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock>
+                            <Run Text="Валютная пара: " />
+                            <Run Text="{Binding Pair}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Цена трейда: " />
+                            <Run Text="{Binding Price}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Объем трейда: " />
+                            <Run Text="{Binding Amount}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Направление: " />
+                            <Run Text="{Binding Side}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Время: " />
+                            <Run Text="{Binding Time}" />
+                        </TextBlock>
+                        <TextBlock>
+                             <Run Text="Id трейда: " />
+                             <Run Text="{Binding Id}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="--------------------------------------" />
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <DataGrid Margin="32,96,664,475" ItemsSource="{Binding ConvectorVm.Wallet}" AutoGenerateColumns="True"/>
+
+        <TextBox HorizontalAlignment="Left" Margin="24,37,0,0" TextWrapping="Wrap"  Text="{Binding ConvectorVm.WalletBtc, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="166,37,0,0" TextWrapping="Wrap" Text="{Binding ConvectorVm.WalletXrp, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="309,37,0,0" TextWrapping="Wrap" Text="{Binding ConvectorVm.WalletXmr, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="451,37,0,0" TextWrapping="Wrap" Text="{Binding ConvectorVm.WalletDash, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+        <Label Content="BTC" HorizontalAlignment="Left" Margin="62,6,0,0" VerticalAlignment="Top" Width="76"/>
+        <Label Content="XRP" HorizontalAlignment="Left" Margin="210,6,0,0" VerticalAlignment="Top" Width="76"/>
+        <Label Content="XMR " HorizontalAlignment="Left" Margin="353,6,0,0" VerticalAlignment="Top" Width="76"/>
+        <Label Content="DASH" HorizontalAlignment="Left" Margin="495,6,0,0" VerticalAlignment="Top" Width="76"/>
+        <Button Content="Расчет
+                " HorizontalAlignment="Left" Margin="248,71,0,0" Click="ConvectorCurrency" VerticalAlignment="Top"/>
+        <Label Content="Свечи" HorizontalAlignment="Left" Margin="100,233,0,0" VerticalAlignment="Top"/>
+        <Label Content="Трейды" HorizontalAlignment="Left" Margin="451,233,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="160,263,0,0" TextWrapping="Wrap" Text="{Binding CandleVm.CandleInputPair, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+        <TextBox HorizontalAlignment="Left" Margin="160,286,0,0" TextWrapping="Wrap" Text="{Binding CandleVm.CandleInputCount, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+        <Label Content="Валютная пара" HorizontalAlignment="Left" Margin="48,259,0,0" VerticalAlignment="Top"/>
+        <Label Content="Количество" HorizontalAlignment="Left" Margin="56,282,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="492,312,0,0" TextWrapping="Wrap" Text="{Binding TradeVm.TradeInputPair, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+        <TextBox HorizontalAlignment="Left" Margin="492,335,0,0" TextWrapping="Wrap" Text="{Binding TradeVm.TradeInputCount, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+        <Label Content="Валютная пара" HorizontalAlignment="Left" Margin="380,308,0,0" VerticalAlignment="Top"/>
+        <Label Content="Количество" HorizontalAlignment="Left" Margin="388,331,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="160,313,0,0" TextWrapping="Wrap" Text="{Binding CandleVm.CandleInputPeriod, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+        <TextBox HorizontalAlignment="Left" Margin="120,340,0,0" TextWrapping="Wrap" Text="{Binding CandleVm.CandleInputFrom,  Converter={StaticResource DateTimeConverter}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="124"/>
+        <Label Content="Период" HorizontalAlignment="Left" Margin="67,309,0,0" VerticalAlignment="Top"/>
+        <Label Content="Время начало" HorizontalAlignment="Left" Margin="17,336,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="120,371,0,0" TextWrapping="Wrap" Text="{Binding CandleVm.CandleInputTo,  Converter={StaticResource DateTimeConverter}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="124"/>
+        <Label Content="Время конец" HorizontalAlignment="Left" Margin="17,367,0,0" VerticalAlignment="Top"/>
+        <Label Content="с." HorizontalAlignment="Left" Margin="220,311,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.603,0.465" Height="24"/>
+        <Button Content="Запрос" HorizontalAlignment="Left" Margin="451,400,0,0" VerticalAlignment="Top" Click="OnLoadTradesClick"/>
+        <Button Content="Запрос" HorizontalAlignment="Left" Margin="112,400,0,0" VerticalAlignment="Top" Click="OnLoadCandlesClick"/>
+        <ListBox ItemsSource="{Binding CandleVm.CandlesSocket}" Margin="614,181,26,350">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock>
+<Run Text="Валютная пара: " />
+<Run Text="{Binding Pair}" />
+                        </TextBlock>
+                        <TextBlock>
+<Run Text="Максимальная цена: " />
+<Run Text="{Binding HighPrice}" />
+                        </TextBlock>
+                        <TextBlock>
+<Run Text="Минимальная цена: " />
+<Run Text="{Binding LowPrice}" />
+                        </TextBlock>
+                        <TextBlock>
+<Run Text="Цена закрытия: " />
+<Run Text="{Binding ClosePrice}" />
+                        </TextBlock>
+                        <TextBlock>
+<Run Text="Общая сумма сделок: " />
+<Run Text="{Binding TotalPrice}" />
+                        </TextBlock>
+                        <TextBlock>
+ <Run Text="Общий объем: " />
+ <Run Text="{Binding TotalVolume}" />
+                        </TextBlock>
+                        <TextBlock>
+ <Run Text="Время: " />
+ <Run Text="{Binding OpenTime}" />
+                        </TextBlock>
+                        <TextBlock>
+<Run Text="--------------------------------------" />
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Label Content="Socket" Margin="882,6,277,0" VerticalAlignment="Top"/>
+        <Label Content="Подписка на свечи" Margin="632,37,438,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="735,85,0,0" TextWrapping="Wrap" Text="{Binding CandleVm.CandleInputPairSocket, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+        <TextBox HorizontalAlignment="Left" Margin="735,122,0,0" TextWrapping="Wrap" Text="{Binding CandleVm.CandleInputCountSocket, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+        <Label Content="Валютная пара" HorizontalAlignment="Left" Margin="623,81,0,0" VerticalAlignment="Top"/>
+        <Label Content="Количество" HorizontalAlignment="Left" Margin="632,118,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="1059,138,0,0" TextWrapping="Wrap" Text="{Binding CandleVm.CandleInputPeriodSocket, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+        <TextBox HorizontalAlignment="Left" Margin="1051,77,0,0" TextWrapping="Wrap" Text="{Binding CandleVm.CandleInputToSocket,  Converter={StaticResource DateTimeConverter}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="124"/>
+        <Label Content="Период" HorizontalAlignment="Left" Margin="967,134,0,0" VerticalAlignment="Top"/>
+        <Label Content="Время начало" HorizontalAlignment="Left" Margin="949,73,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="1051,108,0,0" TextWrapping="Wrap" Text="{Binding CandleVm.CandleInputFromSocket,  Converter={StaticResource DateTimeConverter}, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="124"/>
+        <Label Content="Время конец" HorizontalAlignment="Left" Margin="949,104,0,0" VerticalAlignment="Top"/>
+        <Label Content="с." HorizontalAlignment="Left" Margin="1119,136,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.603,0.465" Height="24"/>
+        <ListBox ItemsSource="{Binding TradeVm.TradesSocket}" Margin="614,513,26,29">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock>
+        <Run Text="Валютная пара: " />
+        <Run Text="{Binding Pair}" />
+                        </TextBlock>
+                        <TextBlock>
+        <Run Text="Цена трейда: " />
+        <Run Text="{Binding Price}" />
+                        </TextBlock>
+                        <TextBlock>
+        <Run Text="Объем трейда: " />
+        <Run Text="{Binding Amount}" />
+                        </TextBlock>
+                        <TextBlock>
+        <Run Text="Направление: " />
+        <Run Text="{Binding Side}" />
+                        </TextBlock>
+                        <TextBlock>
+        <Run Text="Время: " />
+        <Run Text="{Binding Time}" />
+                        </TextBlock>
+                        <TextBlock>
+         <Run Text="Id трейда: " />
+         <Run Text="{Binding Id}" />
+                        </TextBlock>
+                        <TextBlock>
+        <Run Text="--------------------------------------" />
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Label Content="Подписка на трейды" Margin="632,388,408,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="735,436,0,0" TextWrapping="Wrap" Text="{Binding TradeVm.TradeInputPairSocket, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+        <TextBox HorizontalAlignment="Left" Margin="1077,436,0,0" TextWrapping="Wrap" Text="{Binding TradeVm.TradeInputCountSocket, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+        <Label Content="Валютная пара" HorizontalAlignment="Left" Margin="623,432,0,0" VerticalAlignment="Top"/>
+        <Label Content="Количество" HorizontalAlignment="Left" Margin="974,432,0,0" VerticalAlignment="Top"/>
+        <Button Content="Подписаться" HorizontalAlignment="Left" Margin="857,150,0,0" VerticalAlignment="Top" Click="OnConnectCandlesClick" Width="99"/>
+        <Button Content="Подписаться" HorizontalAlignment="Left" Margin="857,481,0,0" VerticalAlignment="Top" Click="OnConnectTradesClick" Width="99"/>
+        <Button Content="Отписаться" HorizontalAlignment="Left" Margin="741,150,0,0" VerticalAlignment="Top" Click="UnconnectCandlesClick" Width="99"/>
+        <Button Content="Отписаться" HorizontalAlignment="Left" Margin="741,481,0,0" VerticalAlignment="Top" Click="UnconnectTradesClick" Width="99"/>
+
+    </Grid>
+</Window>

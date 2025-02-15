@@ -37,7 +37,7 @@ namespace TestHQ
         /// <summary>
         /// Id трейда
         /// </summary>
-        public string Id { get; set; }
+        public long Id { get; set; }
 
     }
 }
